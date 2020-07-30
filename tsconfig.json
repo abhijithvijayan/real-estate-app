@@ -2,6 +2,9 @@
   "extends": "@abhijithvijayan/tsconfig",
   "compilerOptions": {
     "outDir": "production-server",
+    "skipLibCheck": true
   },
-  "include": []
+  "include": [
+    "server"
+  ]
 }
