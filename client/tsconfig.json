@@ -1,7 +1,6 @@
 {
   "extends": "@abhijithvijayan/tsconfig",
   "compilerOptions": {
-    "outDir": "production-server",
     "target": "es5",
     "lib": [
       "dom",

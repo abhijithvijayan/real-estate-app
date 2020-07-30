@@ -17,7 +17,7 @@ app.prepare().then(() => {
   server.use(express.json());
   server.use(express.urlencoded({extended: true}));
 
-  server.get('/', (_req, res) => res.json({status: 'hello world'}));
+  server.get('/test', (_req, res) => res.json({status: 'hello world'}));
 
   // Handle everything else with Next.js
   server.get('*', (req, res) => handle(req, res));
