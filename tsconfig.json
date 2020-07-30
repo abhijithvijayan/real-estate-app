@@ -1,0 +1,7 @@
+{
+  "extends": "@abhijithvijayan/tsconfig",
+  "compilerOptions": {
+    "outDir": "production-server",
+  },
+  "include": []
+}
