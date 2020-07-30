@@ -16,11 +16,19 @@
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.17.1",
+    "next": "^9.5.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
   "devDependencies": {
     "@abhijithvijayan/eslint-config": "2.5.5",
     "@abhijithvijayan/eslint-config-airbnb": "^1.0.2",
     "@abhijithvijayan/tsconfig": "^1.2.1",
+    "@types/node": "^14.0.27",
+    "@types/react": "^16.9.43",
+    "@types/react-dom": "^16.9.8",
     "@typescript-eslint/eslint-plugin": "^3.7.0",
     "@typescript-eslint/parser": "^3.7.0",
     "babel-eslint": "^10.1.0",
