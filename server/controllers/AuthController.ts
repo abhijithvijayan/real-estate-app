@@ -5,7 +5,7 @@ import {Request, Response, NextFunction, Handler} from 'express';
  *  Custom Callback for Passport auth
  *  https://www.passportjs.org/docs/authenticate/
  */
-const authenticate = (strategy: 'local', error: string) => {
+const authenticate = (strategy: 'local' | 'jwt', error: string) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return function auth(req: Request, res: Response, next: NextFunction): void {
     passport.authenticate(strategy, (err, user, _info) => {
@@ -31,3 +31,4 @@ export const localAuth: Handler = authenticate(
   'local',
   'Email or password is wrong.'
 );
+export const jwtAuth: Handler = authenticate('jwt', 'Unauthorized');
