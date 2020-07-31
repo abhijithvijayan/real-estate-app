@@ -2,8 +2,10 @@ import express from 'express';
 import morgan from 'morgan';
 import nextApp from 'next';
 
-const port = parseInt(process.env.PORT || '3000', 10);
-const isDev = process.env.NODE_ENV !== 'production';
+import env from './env';
+
+const port = env.PORT;
+const {isDev} = env;
 const app = nextApp({dir: './client', dev: isDev});
 const handle = app.getRequestHandler();
 
