@@ -12,5 +12,10 @@ router.post(
   asyncHandler(AuthController.localAuth),
   AuthController.signToken
 );
+router.post(
+  '/test-jwt-auth',
+  asyncHandler(AuthController.jwtAuth),
+  (req, res) => res.send({status: true})
+);
 
 export default router;
