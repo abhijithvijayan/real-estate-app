@@ -1,5 +1,5 @@
 import passport from 'passport';
-import express from 'express';
+import express, {Express, Request, Response} from 'express';
 import morgan from 'morgan';
 import nextApp from 'next';
 
@@ -15,7 +15,7 @@ const app = nextApp({dir: './client', dev: isDev});
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
-  const server = express();
+  const server: Express = express();
 
   server.set('port', env.PORT);
   server.use(express.json());
@@ -36,23 +36,25 @@ app.prepare().then(() => {
   server.use('/api/v1', routes);
 
   // Handle everything else with Next.js
-  server.get('*', (req, res) => handle(req, res));
+  server.get('*', (req: Request, res: Response) => handle(req, res));
 
   // Connect to the database & then start express
   createDatabaseConnection()
-    .then(async (_conn) => {
-      // Do database migrations(use CLI instead)
-      // await _conn.runMigrations();
+    .then(
+      async (_conn): Promise<void> => {
+        // Do database migrations(use CLI instead)
+        // await _conn.runMigrations();
 
-      server.listen(server.get('port'), () => {
-        logger.info(
-          `Express is running at http://localhost:${server.get(
-            'port'
-          )} in ${server.get('env')} mode`
-        );
-      });
-    })
-    .catch((err) => {
+        server.listen(server.get('port'), (): void => {
+          logger.info(
+            `Express is running at http://localhost:${server.get(
+              'port'
+            )} in ${server.get('env')} mode`
+          );
+        });
+      }
+    )
+    .catch((err): void => {
       logger.error(`Error while connecting to the database: ${err}`);
     });
 });
