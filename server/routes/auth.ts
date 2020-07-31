@@ -15,6 +15,7 @@ router.post(
 router.post(
   '/test-jwt-auth',
   asyncHandler(AuthController.jwtAuth),
+  asyncHandler(AuthController.isAdmin),
   (req, res) => res.send({status: true})
 );
 

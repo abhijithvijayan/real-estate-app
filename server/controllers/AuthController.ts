@@ -2,8 +2,8 @@ import {Request, Response, NextFunction, Handler} from 'express';
 import {getRepository} from 'typeorm';
 import passport from 'passport';
 
+import {Role, UserRole} from '../models/Role';
 import {User} from '../models/User';
-import {Role} from '../models/Role';
 
 import * as utils from '../util/token';
 
@@ -52,7 +52,7 @@ export const signToken = (
         }
 
         if (token === undefined) {
-          return res.status(500).send(new Error('Token signing failed'));
+          return res.status(500).send('Token signing failed');
         }
 
         return res.status(200).send({token});
@@ -63,10 +63,10 @@ export const signToken = (
   }
 
   // eslint-disable-next-line consistent-return
-  return res.status(500).send(new Error('Token signing failed'));
+  return res.status(500).send('Token signing failed');
 };
 
-export const hasRequiredRoles = (requiredRoles: string[]) => {
+export const hasRequiredRoles = (requiredRoles: string[], error: string) => {
   return async (
     req: Request,
     res: Response,
@@ -75,7 +75,7 @@ export const hasRequiredRoles = (requiredRoles: string[]) => {
     const currentUser = req.user as User | undefined;
 
     if (currentUser === undefined) {
-      return res.status(401).send();
+      return res.status(401).send('No such user');
     }
 
     const userRepository = getRepository(User);
@@ -95,6 +95,23 @@ export const hasRequiredRoles = (requiredRoles: string[]) => {
       return next();
     }
 
-    return res.status(401).send();
+    return res.status(401).send(error);
   };
 };
+
+export const isAdmin = hasRequiredRoles(
+  [UserRole.ADMIN],
+  'Must be an administrator to perform this action'
+);
+export const isBuyer = hasRequiredRoles(
+  [UserRole.BUYER],
+  'Must be a buyer to perform this action'
+);
+export const isSeller = hasRequiredRoles(
+  [UserRole.SELLER],
+  'Must be a seller to perform this action'
+);
+export const canCreateListing = hasRequiredRoles(
+  [UserRole.ADMIN, UserRole.AGENT, UserRole.SELLER],
+  'Must have special privileges to perform this action'
+);
