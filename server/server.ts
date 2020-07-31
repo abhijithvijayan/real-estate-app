@@ -1,3 +1,4 @@
+import passport from 'passport';
 import express from 'express';
 import morgan from 'morgan';
 import nextApp from 'next';
@@ -7,6 +8,7 @@ import env from './env';
 import {createDatabaseConnection} from './db';
 import logger from './util/logger';
 import routes from './routes';
+import './passport';
 
 const {isDev} = env;
 const app = nextApp({dir: './client', dev: isDev});
@@ -18,6 +20,7 @@ app.prepare().then(() => {
   server.set('port', env.PORT);
   server.use(express.json());
   server.use(express.urlencoded({extended: true}));
+  server.use(passport.initialize());
 
   // Logger
   server.use(
