@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable class-methods-use-this, @typescript-eslint/no-unused-vars */
 import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
@@ -11,6 +11,7 @@ import {
   Unique,
   JoinColumn,
 } from 'typeorm';
+import bcryptjs from 'bcryptjs';
 
 import {UserFavourite} from './UserFavourite';
 import {UserListing} from './UserListing';
@@ -62,4 +63,12 @@ export class User {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  getPasswordHash(password: string): string {
+    return bcryptjs.hashSync(password, 10);
+  }
+
+  checkIfPasswordsMatch(password: string): boolean {
+    return bcryptjs.compareSync(password, this.password);
+  }
 }

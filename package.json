@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "advanced-css-reset": "^1.2.1",
+    "bcryptjs": "^2.4.3",
     "emoji-log": "^1.0.2",
     "envalid": "^6.0.2",
     "express": "^4.17.1",
@@ -44,6 +45,7 @@
     "@abhijithvijayan/eslint-config": "2.5.5",
     "@abhijithvijayan/eslint-config-airbnb": "^1.0.2",
     "@abhijithvijayan/tsconfig": "^1.2.1",
+    "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.7",
     "@types/morgan": "^1.9.1",
     "@types/node": "^14.0.27",
