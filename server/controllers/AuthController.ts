@@ -1,7 +1,9 @@
-import passport from 'passport';
 import {Request, Response, NextFunction, Handler} from 'express';
+import {getRepository} from 'typeorm';
+import passport from 'passport';
 
 import {User} from '../models/User';
+import {Role} from '../models/Role';
 
 import * as utils from '../util/token';
 
@@ -62,4 +64,37 @@ export const signToken = (
 
   // eslint-disable-next-line consistent-return
   return res.status(500).send(new Error('Token signing failed'));
+};
+
+export const hasRequiredRoles = (requiredRoles: string[]) => {
+  return async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void | Response<any>> => {
+    const currentUser = req.user as User | undefined;
+
+    if (currentUser === undefined) {
+      return res.status(401).send();
+    }
+
+    const userRepository = getRepository(User);
+    let user: User;
+
+    try {
+      user = await userRepository.findOneOrFail({
+        relations: ['roles'],
+        where: {id: currentUser.id},
+      });
+    } catch (err) {
+      return res.status(401).send(err);
+    }
+
+    const currentRoles: Role[] = user.roles;
+    if (currentRoles.some((item) => requiredRoles.includes(item.name))) {
+      return next();
+    }
+
+    return res.status(401).send();
+  };
 };
