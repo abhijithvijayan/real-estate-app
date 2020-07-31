@@ -55,7 +55,7 @@ passport.use(
  */
 
 const jwtOptions: JwtStrategyOptions = {
-  jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: env.JWT_SECRET,
 };
 
