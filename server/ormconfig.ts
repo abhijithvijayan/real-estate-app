@@ -5,8 +5,10 @@ import env from './env';
 /**
  *  Uses `ts-node` to transpile this config to CommonJS
  *  As of now, ORM config file cannot be a TS file
- *
  *  Related: https://github.com/typeorm/typeorm/issues/2828
+ *
+ *  Seeding fails => Transaction issue while migration running:
+ *  Related: https://github.com/typeorm/typeorm/issues/2693
  */
 
 const config: ConnectionOptions = {

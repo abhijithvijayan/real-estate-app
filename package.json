@@ -19,7 +19,7 @@
     "typeorm:cli": "ts-node ./node_modules/typeorm/cli -f server/ormconfig.ts",
     "migration:create": "yarn typeorm:cli migration:create -n",
     "migration:generate": "yarn typeorm:cli migration:generate -n",
-    "migration": "yarn typeorm:cli migration:run",
+    "migration": "yarn typeorm:cli migration:run -t=false",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
