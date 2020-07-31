@@ -18,9 +18,9 @@ const config: ConnectionOptions = {
   database: env.DB_NAME,
   synchronize: env.TYPEORM_SYNCHRONIZE, // Disable this in production
   logging: env.TYPEORM_LOGGING,
-  entities: ['server/models/**/*.ts'],
-  migrations: ['server/migrations/**/*.ts'],
-  // subscribers: ['server/subscribers/**/*.ts'],
+  entities: ['production-server/models/**/*{.ts,.js}'],
+  migrations: ['production-server/migrations/**/*{.ts,.js}'],
+  // subscribers: ['production-server/subscribers/**/*{.ts,.js}'],
   cli: {
     entitiesDir: 'server/models',
     migrationsDir: 'server/migrations',
