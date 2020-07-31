@@ -22,6 +22,7 @@ export class Role {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // Todo: better to use enum type?
   @Column({length: 50, unique: true})
   name: string;
 
