@@ -7,9 +7,8 @@ const env = cleanEnv(process.env, {
   DB_NAME: str({default: 'postgres'}),
   DB_USER: str(),
   DB_PASSWORD: str(),
-  DB_SSL: bool({default: false}),
-  DB_POOL_MIN: num({default: 2}),
-  DB_POOL_MAX: num({default: 10}),
+  TYPEORM_SYNCHRONIZE: bool({default: true}),
+  TYPEORM_LOGGING: bool({default: false}),
   JWT_SECRET: str(),
 });
 

@@ -16,6 +16,10 @@
     "dev": "nodemon server/server.ts",
     "build": "rimraf production-server && tsc --project tsconfig.json && next build client/",
     "start": "cross-env NODE_ENV=production node production-server/server.js",
+    "typeorm:cli": "ts-node ./node_modules/typeorm/cli -f server/ormconfig.ts",
+    "migration:create": "yarn typeorm:cli migration:create -n",
+    "migration:generate": "yarn typeorm:cli migration:generate -n",
+    "migration": "yarn typeorm:cli migration:run",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
@@ -26,11 +30,14 @@
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "next": "^9.5.1",
+    "pg": "^8.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "reflect-metadata": "^0.1.13",
     "styled-components": "^5.1.1",
     "tailwindcss": "^1.6.0",
-    "twin.macro": "^1.7.0"
+    "twin.macro": "^1.7.0",
+    "typeorm": "^0.2.25"
   },
   "devDependencies": {
     "@abhijithvijayan/eslint-config": "2.5.5",
@@ -61,6 +68,7 @@
     "sass-extract": "^2.1.0",
     "sass-extract-js": "^0.4.0",
     "sass-extract-loader": "^1.1.0",
+    "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   }
 }

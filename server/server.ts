@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import nextApp from 'next';
 
 import env from './env';
+import {createDatabaseConnection} from './db';
 
 const port = env.PORT;
 const {isDev} = env;
@@ -24,12 +25,23 @@ app.prepare().then(() => {
   // Handle everything else with Next.js
   server.get('*', (req, res) => handle(req, res));
 
-  server.listen(port, (err) => {
-    if (err) {
-      throw err;
-    }
+  // Connects to the Database -> then starts express
+  createDatabaseConnection()
+    .then(async (_conn) => {
+      // Do database migrations(use CLI instead)
+      // await _conn.runMigrations();
 
-    // eslint-disable-next-line no-console
-    console.log(`> Ready on http://localhost:${port}`);
-  });
+      server.listen(port, (err) => {
+        if (err) {
+          throw err;
+        }
+
+        // eslint-disable-next-line no-console
+        console.log(`> Ready on http://localhost:${port}`);
+      });
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log('Error while connecting to the database', err);
+    });
 });
