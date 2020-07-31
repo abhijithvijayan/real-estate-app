@@ -1,11 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  Entity,
   PrimaryGeneratedColumn,
-  Column,
-  Unique,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
+  OneToOne,
+  Entity,
+  Column,
+  Unique,
+  JoinColumn,
 } from 'typeorm';
+
+import {UserFavourite} from './UserFavourite';
+import {UserListing} from './UserListing';
+import {Role} from './Role';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -13,11 +22,17 @@ export enum UserRole {
   SELLER = 'seller',
 }
 
+/**
+ *  User (ManyToMany) -> Role
+ *  User (OneToOne)   -> UserFavourite
+ *  User (OneToOne)   -> UserListing
+ */
+
 @Entity()
 @Unique(['email'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({length: 64, nullable: false})
   email: string;
@@ -25,17 +40,26 @@ export class User {
   @Column()
   password: string;
 
-  @Column({name: 'first_name'})
-  firstName: string;
+  // ManyToOne relationship to role
+  @ManyToMany((type) => Role)
+  @JoinTable()
+  roles: Role[];
 
-  @Column({name: 'last_name'})
-  lastName: string;
+  // OneToOne relationship to UserFavourite(buyer favourite list)
+  @OneToOne((type) => UserFavourite)
+  @JoinColumn()
+  userFavourite: UserFavourite;
+
+  // OneToOne relationship to UserListing(buyer listings)
+  @OneToOne((type) => UserListing)
+  @JoinColumn()
+  userListing: UserListing;
 
   @Column()
-  @CreateDateColumn({name: 'created_at'})
+  @CreateDateColumn()
   createdAt: Date;
 
   @Column()
-  @UpdateDateColumn({name: 'updated_at'})
+  @UpdateDateColumn()
   updatedAt: Date;
 }
