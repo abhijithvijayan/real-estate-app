@@ -1,21 +1,23 @@
+import {UserRole} from '../models/Role';
+
 export const RolesSeed = [
   {
-    name: 'admin',
+    name: UserRole.ADMIN,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    name: 'buyer',
+    name: UserRole.BUYER,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    name: 'seller',
+    name: UserRole.SELLER,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    name: 'agent',
+    name: UserRole.AGENT,
     createdAt: new Date(),
     updatedAt: new Date(),
   },

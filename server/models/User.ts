@@ -17,12 +17,6 @@ import {UserFavourite} from './UserFavourite';
 import {UserListing} from './UserListing';
 import {Role} from './Role';
 
-export enum UserRole {
-  ADMIN = 'admin',
-  BUYER = 'buyer',
-  SELLER = 'seller',
-}
-
 /**
  *  User (ManyToMany) -> Role
  *  User (OneToOne)   -> UserFavourite
