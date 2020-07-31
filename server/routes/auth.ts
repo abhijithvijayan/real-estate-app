@@ -7,8 +7,10 @@ import UserController from '../controllers/UserController';
 const router = Router();
 
 router.post('/signup', asyncHandler(UserController.signup));
-router.post('/signin', asyncHandler(AuthController.localAuth), (req, res) =>
-  res.send({status: true})
+router.post(
+  '/signin',
+  asyncHandler(AuthController.localAuth),
+  AuthController.signToken
 );
 
 export default router;
