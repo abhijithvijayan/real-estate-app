@@ -6,6 +6,7 @@
       "es5",
       "es6"
     ],
+    "noUnusedParameters": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false, // https://stackoverflow.com/a/50241920/9387542
