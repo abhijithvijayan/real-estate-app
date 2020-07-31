@@ -3,7 +3,9 @@ import morgan from 'morgan';
 import nextApp from 'next';
 
 import env from './env';
+
 import {createDatabaseConnection} from './db';
+import routes from './routes';
 
 const port = env.PORT;
 const {isDev} = env;
@@ -20,7 +22,7 @@ app.prepare().then(() => {
   server.use(express.json());
   server.use(express.urlencoded({extended: true}));
 
-  server.get('/test', (_req, res) => res.json({status: 'hello world'}));
+  server.use('/api/v1', routes);
 
   // Handle everything else with Next.js
   server.get('*', (req, res) => handle(req, res));
