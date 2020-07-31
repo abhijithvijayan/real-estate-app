@@ -11,6 +11,8 @@ import passport from 'passport';
 import {getRepository} from 'typeorm';
 
 import {User} from './models/User';
+
+import {JwtPayload} from './util/token';
 import env from './env';
 
 /**
@@ -62,14 +64,14 @@ const jwtOptions: JwtStrategyOptions = {
 passport.use(
   new JwtStrategy(
     jwtOptions,
-    async (jwt_payload: string, done): Promise<void> => {
+    async (jwt_payload: JwtPayload, done): Promise<void> => {
       const userRepository = getRepository(User);
 
       let user: User;
       try {
         // Get user from db
         user = await userRepository.findOneOrFail({
-          where: {email: jwt_payload},
+          where: {email: jwt_payload.sub},
         });
 
         if (user) {
