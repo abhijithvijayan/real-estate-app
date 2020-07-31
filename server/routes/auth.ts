@@ -1,9 +1,10 @@
+import asyncHandler from 'express-async-handler';
 import {Router} from 'express';
+
+import AuthController from '../controllers/AuthController';
 
 const router = Router();
 
-router.get('/', (): void => {
-  console.log('/api/v1/auth');
-});
+router.post('/signup', asyncHandler(AuthController.signup));
 
 export default router;
