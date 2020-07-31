@@ -6,6 +6,7 @@
       "es5",
       "es6"
     ],
+    "noUnusedLocals": false,
     "noUnusedParameters": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
