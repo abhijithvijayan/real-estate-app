@@ -3,7 +3,7 @@ import {getRepository} from 'typeorm';
 
 import {User} from '../models/User';
 
-class AuthController {
+class UserController {
   static signup = async (
     req: Request,
     res: Response
@@ -28,4 +28,4 @@ class AuthController {
   };
 }
 
-export default AuthController;
+export default UserController;

@@ -1,10 +1,10 @@
 import asyncHandler from 'express-async-handler';
 import {Router} from 'express';
 
-import AuthController from '../controllers/AuthController';
+import UserController from '../controllers/UserController';
 
 const router = Router();
 
-router.post('/signup', asyncHandler(AuthController.signup));
+router.post('/signup', asyncHandler(UserController.signup));
 
 export default router;
