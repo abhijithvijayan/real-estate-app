@@ -2,6 +2,13 @@
   "extends": "@abhijithvijayan/tsconfig",
   "compilerOptions": {
     "outDir": "production-server",
+    "lib": [
+      "es5",
+      "es6"
+    ],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false, // https://stackoverflow.com/a/50241920/9387542
     "skipLibCheck": true
   },
   "include": [
