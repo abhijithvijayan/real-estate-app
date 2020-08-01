@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   Column,
@@ -48,14 +49,16 @@ export class Property {
   @JoinColumn()
   address: Address;
 
-  // ManyToOne relationship to user(seller listing)
+  // ManyToOne relationship to user(seller listing list)
   @ManyToOne((type) => UserListing, (listing) => listing.properties)
   listing: Promise<UserListing>;
 
-  // Todo: many to many?
-  // ManyToOne relationship to user(buyer favourites)
-  @ManyToOne((type) => UserFavourite, (favourite) => favourite.properties)
-  favourite: UserFavourite;
+  // ManyToMany relationship to user(buyer's / seller's favourites list)
+  @ManyToMany(
+    (type) => UserFavourite,
+    (userFavourite) => userFavourite.properties
+  )
+  userFavourites: Promise<UserFavourite[]>; // lazy loaded
 
   @Column()
   @CreateDateColumn()

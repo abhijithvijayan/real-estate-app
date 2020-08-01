@@ -3,7 +3,8 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  ManyToMany,
+  JoinTable,
   Column,
   Entity,
 } from 'typeorm';
@@ -20,8 +21,10 @@ export class UserFavourite {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany((type) => Property, (property) => property.favourite)
-  properties: Property[];
+  // ManyToOne relationship to Property
+  @ManyToMany((type) => Property, (property) => property.userFavourites)
+  @JoinTable()
+  properties: Promise<Property[]>; // lazy loaded
 
   @Column()
   @CreateDateColumn()
