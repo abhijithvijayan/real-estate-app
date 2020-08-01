@@ -16,6 +16,7 @@ const endpoints: Endpoints = {
 export type RequestProps = {
   path: string;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  noAuth?: boolean;
 };
 
 type Endpoints = Record<Routes, RequestProps>;

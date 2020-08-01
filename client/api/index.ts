@@ -1,7 +1,8 @@
-import axios, {AxiosInstance, AxiosPromise} from 'axios';
+import axios, {AxiosInstance, AxiosPromise, AxiosRequestConfig} from 'axios';
 
 import {Routes, getEndpointProps, RequestProps} from './constants';
 import getServerApiUrl from './getServerApiUrl';
+import {getToken} from '../util/token';
 
 const axiosInstance: AxiosInstance = axios.create({
   // baseURL: '/api/v1', // this breaks SSR
@@ -46,8 +47,18 @@ function fireUpApiRequest({
     request.method = 'GET';
   }
 
-  return axiosInstance({
+  const config: AxiosRequestConfig = {
+    headers: {},
+    ...(request.method === 'GET' && {params}),
     ...(request.method === 'POST' && {data: params}),
+  };
+
+  if (!request.noAuth) {
+    config.headers.Authorization = getToken();
+  }
+
+  return axiosInstance({
+    ...config,
     method: request.method,
     url: request.path,
   });
