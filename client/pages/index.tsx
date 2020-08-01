@@ -1,5 +1,6 @@
+import React, {useEffect} from 'react';
+import Router from 'next/router';
 import 'twin.macro';
-import React from 'react';
 
 import BodyWrapper from '../components/BodyWrapper';
 import DashboardPage from '../components/Dashboard';
@@ -7,8 +8,21 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 
 import {SidebarContextProvider} from '../contexts/sidebar-context';
+import {useStoreState} from '../state/store';
 
 const IndexPage: React.FC = () => {
+  const {isAuthenticated} = useStoreState((s) => s.auth);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      Router.push('/signin');
+    }
+  }, [isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <>
       <SidebarContextProvider>

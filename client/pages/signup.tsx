@@ -1,11 +1,13 @@
 /* eslint-disable consistent-return */
 import {useFormState} from 'react-use-form-state';
+import React, {useState, useEffect} from 'react';
 import emailValidator from 'email-validator';
-import React, {useState} from 'react';
+import Router from 'next/router';
 import Link from 'next/link';
 import 'twin.macro';
 
 import BodyWrapper from '../components/BodyWrapper';
+import {useStoreState} from '../state/store';
 
 const LoginPage: React.FC = () => {
   const [
@@ -23,6 +25,14 @@ const LoginPage: React.FC = () => {
   }>(null, {withIds: true});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
+
+  const {isAuthenticated} = useStoreState((s) => s.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      Router.push('/');
+    }
+  }, [isAuthenticated]);
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
