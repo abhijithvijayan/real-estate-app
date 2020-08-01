@@ -32,7 +32,7 @@ export class User {
   @Column({length: 64, nullable: false})
   email: string;
 
-  @Column({select: false})
+  @Column({select: true})
   password: string;
 
   // ManyToOne relationship to role
@@ -64,5 +64,11 @@ export class User {
 
   checkIfPasswordsMatch(password: string): boolean {
     return bcryptjs.compareSync(password, this.password);
+  }
+
+  // https://github.com/typeorm/typeorm/issues/535#issuecomment-662471151
+  toJSON(): this {
+    delete this.password;
+    return this;
   }
 }
