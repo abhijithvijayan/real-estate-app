@@ -1,19 +1,31 @@
-import React from 'react';
 import 'twin.macro';
+import React from 'react';
+
+import BodyWrapper from '../components/BodyWrapper';
+import DashboardPage from '../components/Dashboard';
+import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
+
+import {SidebarContextProvider} from '../contexts/sidebar-context';
 
 const IndexPage: React.FC = () => {
   return (
     <>
-      <div tw="my-12 text-center">
-        <div tw="p-2">
-          <div tw="inline-flex items-center bg-white leading-none text-pink-600 rounded-full p-2 shadow text-sm">
-            <span tw="inline-flex bg-pink-600 text-white rounded-full h-6 px-3 justify-center items-center">
-              Hello
-            </span>
-            <span tw="inline-flex px-2">World!</span>
+      <SidebarContextProvider>
+        <BodyWrapper>
+          <div tw="flex h-screen bg-gray-200">
+            <Sidebar />
+
+            <div tw="flex flex-col flex-1 overflow-hidden">
+              <Header />
+
+              <main tw="flex flex-col flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
+                <DashboardPage />
+              </main>
+            </div>
           </div>
-        </div>
-      </div>
+        </BodyWrapper>
+      </SidebarContextProvider>
     </>
   );
 };

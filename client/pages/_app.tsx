@@ -17,8 +17,6 @@ import '../styles/main.scss';
 // eslint-disable-next-line @typescript-eslint/no-var-requires, import/no-webpack-loader-syntax, import/no-unresolved, node/no-missing-require
 const theme = require('sass-extract-loader?{"plugins": ["sass-extract-js"]}!../styles/base/_variables.scss'); // extract sass variables
 
-console.log(theme);
-
 export interface Theme {
   [key: string]: string;
 }
