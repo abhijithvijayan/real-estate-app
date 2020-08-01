@@ -13,4 +13,10 @@ router.post(
   asyncHandler(PropertyController.createListing)
 );
 
+router.get(
+  '/listing',
+  asyncHandler(AuthController.jwtAuth),
+  asyncHandler(PropertyController.getListings)
+);
+
 export default router;

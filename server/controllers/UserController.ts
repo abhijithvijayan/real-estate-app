@@ -35,10 +35,12 @@ class UserController {
       await userRepository.save(user);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      return res.status(409).send({message: 'Email already in use'});
+      return res
+        .status(409)
+        .send({message: 'Email already in use', status: false});
     }
 
-    return res.status(201).send({message: 'Signup successful.'});
+    return res.status(201).send({message: 'Signup successful.', status: true});
   };
 }
 

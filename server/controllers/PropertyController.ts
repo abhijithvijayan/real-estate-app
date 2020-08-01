@@ -172,7 +172,7 @@ class PropertyController {
 
         return res
           .status(201)
-          .send({message: 'Listing of property successful.'});
+          .send({message: 'Listing of property successful.', status: true});
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -182,7 +182,48 @@ class PropertyController {
 
     return res
       .status(500)
-      .send({message: 'Listing creation of property failed'});
+      .send({message: 'Listing creation of property failed', status: false});
+  };
+
+  static getListings = async (
+    req: Request,
+    res: Response
+  ): Promise<Response<any>> => {
+    const currentUser = req.user as User | undefined;
+
+    if (currentUser === undefined) {
+      return res.status(401).send('No such user');
+    }
+
+    const userRepository = getRepository(User);
+    // const propertiesRepository = getRepository(Property);
+
+    try {
+      const user = await userRepository.findOne({
+        relations: ['userListing'],
+        where: {id: currentUser.id},
+      });
+
+      if (user?.userListing) {
+        // to load objects inside lazy relations:
+        const properties: Property[] = await user.userListing.properties;
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        return res.status(200).json({
+          data: properties,
+          status: true,
+          message: 'Fetching successful',
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      //
+    }
+
+    return res
+      .status(500)
+      .send({message: "Error fetching user's listings", status: false});
   };
 }
 
