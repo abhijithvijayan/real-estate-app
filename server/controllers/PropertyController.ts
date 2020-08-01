@@ -63,6 +63,7 @@ class PropertyController {
     property.noOfBedRooms = noOfBedRooms;
     property.noOfBathRooms = noOfBathRooms;
 
+    const zipCodeRepository = getRepository(ZipCode);
     const countryRepository = getRepository(Country);
     const stateRepository = getRepository(State);
     const cityRepository = getRepository(City);
@@ -100,29 +101,32 @@ class PropertyController {
       await countryRepository.save(country);
     }
 
-    const zipCode = new ZipCode();
-    zipCode.city = city;
-    zipCode.state = state;
-    zipCode.country = country;
+    let zipCode: ZipCode | undefined = await zipCodeRepository.findOne({
+      where: {city, state, country},
+    });
+    if (!zipCode) {
+      zipCode = new ZipCode();
+      zipCode.city = city;
+      zipCode.state = state;
+      zipCode.country = country;
+      await zipCodeRepository.save(zipCode);
+    }
 
     const address = new Address();
     address.street = streetName;
     address.type = addressType;
+    address.zipCode = zipCode;
 
     const userListingRepository = getRepository(UserListing);
     const propertiesRepository = getRepository(Property);
-    const zipCodeRepository = getRepository(ZipCode);
     const addressRepository = getRepository(Address);
     const userRepository = getRepository(User);
 
     try {
-      await zipCodeRepository.save(zipCode);
-
-      address.zipCode = zipCode;
       await addressRepository.save(address);
 
-      property.address = address;
       // save property
+      property.address = address;
       await propertiesRepository.save(property);
 
       // check if user listing exist, if not, create one
