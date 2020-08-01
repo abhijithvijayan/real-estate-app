@@ -8,6 +8,7 @@ import {Address} from '../models/Address';
 import {Country} from '../models/Country';
 import {ZipCode} from '../models/ZipCode';
 import {State} from '../models/State';
+import {Photo} from '../models/Photo';
 import {City} from '../models/City';
 import {User} from '../models/User';
 
@@ -23,6 +24,7 @@ class PropertyController {
     }
 
     const {
+      photos,
       squareMeter,
       shortDescription,
       longDescription,
@@ -39,6 +41,7 @@ class PropertyController {
         stateCode,
       },
     }: {
+      photos: string[];
       squareMeter: number;
       shortDescription: string;
       longDescription: string;
@@ -126,6 +129,8 @@ class PropertyController {
     const addressRepository = getRepository(Address);
     const userRepository = getRepository(User);
 
+    const photosRepository = getRepository(Photo);
+
     try {
       await addressRepository.save(address);
       property.address = address;
@@ -165,6 +170,17 @@ class PropertyController {
 
         // save property
         await propertiesRepository.save(property);
+
+        await Promise.all(
+          photos.map(async (photoUrl: string) => {
+            const photo: Photo = new Photo();
+            photo.url = photoUrl;
+            // set relationship
+            photo.property = property;
+
+            await photosRepository.save(photo);
+          })
+        );
 
         return res
           .status(201)
@@ -361,6 +377,7 @@ class PropertyController {
     try {
       const properties = await propertiesRepository
         .createQueryBuilder('property')
+        .leftJoinAndSelect('property.photos', 'photos')
         .leftJoinAndSelect('property.address', 'address')
         .leftJoinAndSelect('address.zipCode', 'zipCode')
         .leftJoinAndSelect('zipCode.city', 'city')

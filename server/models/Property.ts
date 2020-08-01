@@ -5,6 +5,7 @@ import {
   UpdateDateColumn,
   JoinColumn,
   ManyToMany,
+  OneToMany,
   ManyToOne,
   OneToOne,
   Column,
@@ -14,6 +15,7 @@ import {
 import {UserFavourite} from './UserFavourite';
 import {UserListing} from './UserListing';
 import {Address} from './Address';
+import {Photo} from './Photo';
 
 /**
  *  Property (OneToOne)  -> Address
@@ -43,6 +45,9 @@ export class Property {
 
   @Column({type: 'integer'})
   noOfBathRooms: number;
+
+  @OneToMany((type) => Photo, (photo) => photo.property)
+  photos: Photo[];
 
   // OneToOne relationship to Address
   @OneToOne((type) => Address)

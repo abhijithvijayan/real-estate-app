@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class FixTypeOfRelationshipWithZipCode1596292375608 implements MigrationInterface {
-    name = 'FixTypeOfRelationshipWithZipCode1596292375608'
+export class PhotosForProperties1596297008811 implements MigrationInterface {
+    name = 'PhotosForProperties1596297008811'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "country" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying NOT NULL, "name" character varying(64) NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_0df1ffc03f0ce86e81a9d6cef1e" UNIQUE ("name", "code"), CONSTRAINT "PK_bf6e37c231c4f4ea56dcd887269" PRIMARY KEY ("id"))`);
@@ -14,6 +14,7 @@ export class FixTypeOfRelationshipWithZipCode1596292375608 implements MigrationI
         await queryRunner.query(`CREATE TABLE "user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying(64) NOT NULL, "password" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "userFavouriteId" uuid, "userListingId" uuid, CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "REL_5ff4ab0aa571d2b17ae77c3c41" UNIQUE ("userFavouriteId"), CONSTRAINT "REL_fb3cd5c1672f44ec7c840df059" UNIQUE ("userListingId"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "user_listing" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_ae7a06d62e039988a5e9ca97507" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "property" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "squareMeter" numeric NOT NULL, "shortDescription" character varying(180) NOT NULL, "longDescription" character varying(400) NOT NULL, "noOfRooms" integer NOT NULL, "noOfBedRooms" integer NOT NULL, "noOfBathRooms" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "addressId" uuid, "listingId" uuid, CONSTRAINT "REL_276968c3960cc79910f8ef3cf4" UNIQUE ("addressId"), CONSTRAINT "PK_d80743e6191258a5003d5843b4f" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "photo" ("id" SERIAL NOT NULL, "url" character varying NOT NULL, "propertyId" uuid, CONSTRAINT "PK_723fa50bf70dcfd06fb5a44d4ff" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "user_favourite_properties_property" ("userFavouriteId" uuid NOT NULL, "propertyId" uuid NOT NULL, CONSTRAINT "PK_6361607eef6b794b757c3796083" PRIMARY KEY ("userFavouriteId", "propertyId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_4e3db102c606cc78d89c2bfca8" ON "user_favourite_properties_property" ("userFavouriteId") `);
         await queryRunner.query(`CREATE INDEX "IDX_00a2e39301ecd61092b6f3b335" ON "user_favourite_properties_property" ("propertyId") `);
@@ -28,6 +29,7 @@ export class FixTypeOfRelationshipWithZipCode1596292375608 implements MigrationI
         await queryRunner.query(`ALTER TABLE "user" ADD CONSTRAINT "FK_fb3cd5c1672f44ec7c840df0595" FOREIGN KEY ("userListingId") REFERENCES "user_listing"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "property" ADD CONSTRAINT "FK_276968c3960cc79910f8ef3cf4b" FOREIGN KEY ("addressId") REFERENCES "address"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "property" ADD CONSTRAINT "FK_7001419215eaec129908be240fd" FOREIGN KEY ("listingId") REFERENCES "user_listing"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "photo" ADD CONSTRAINT "FK_3c436075fa7feb9f9fb9e20f61b" FOREIGN KEY ("propertyId") REFERENCES "property"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "user_favourite_properties_property" ADD CONSTRAINT "FK_4e3db102c606cc78d89c2bfca8d" FOREIGN KEY ("userFavouriteId") REFERENCES "user_favourite"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "user_favourite_properties_property" ADD CONSTRAINT "FK_00a2e39301ecd61092b6f3b335a" FOREIGN KEY ("propertyId") REFERENCES "property"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "user_roles_role" ADD CONSTRAINT "FK_5f9286e6c25594c6b88c108db77" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
@@ -39,6 +41,7 @@ export class FixTypeOfRelationshipWithZipCode1596292375608 implements MigrationI
         await queryRunner.query(`ALTER TABLE "user_roles_role" DROP CONSTRAINT "FK_5f9286e6c25594c6b88c108db77"`);
         await queryRunner.query(`ALTER TABLE "user_favourite_properties_property" DROP CONSTRAINT "FK_00a2e39301ecd61092b6f3b335a"`);
         await queryRunner.query(`ALTER TABLE "user_favourite_properties_property" DROP CONSTRAINT "FK_4e3db102c606cc78d89c2bfca8d"`);
+        await queryRunner.query(`ALTER TABLE "photo" DROP CONSTRAINT "FK_3c436075fa7feb9f9fb9e20f61b"`);
         await queryRunner.query(`ALTER TABLE "property" DROP CONSTRAINT "FK_7001419215eaec129908be240fd"`);
         await queryRunner.query(`ALTER TABLE "property" DROP CONSTRAINT "FK_276968c3960cc79910f8ef3cf4b"`);
         await queryRunner.query(`ALTER TABLE "user" DROP CONSTRAINT "FK_fb3cd5c1672f44ec7c840df0595"`);
@@ -53,6 +56,7 @@ export class FixTypeOfRelationshipWithZipCode1596292375608 implements MigrationI
         await queryRunner.query(`DROP INDEX "IDX_00a2e39301ecd61092b6f3b335"`);
         await queryRunner.query(`DROP INDEX "IDX_4e3db102c606cc78d89c2bfca8"`);
         await queryRunner.query(`DROP TABLE "user_favourite_properties_property"`);
+        await queryRunner.query(`DROP TABLE "photo"`);
         await queryRunner.query(`DROP TABLE "property"`);
         await queryRunner.query(`DROP TABLE "user_listing"`);
         await queryRunner.query(`DROP TABLE "user"`);
