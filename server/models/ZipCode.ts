@@ -4,19 +4,25 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToMany,
   OneToOne,
   Column,
   Entity,
 } from 'typeorm';
 
-import {City} from './City';
-import {State} from './State';
+import {Address} from './Address';
 import {Country} from './Country';
+import {State} from './State';
+import {City} from './City';
 
 @Entity()
 export class ZipCode {
   @PrimaryGeneratedColumn('uuid')
   id: number;
+
+  // ZipCode can have multiple addresses
+  @OneToMany((type) => Address, (address) => address.zipCode)
+  addresses: Address[];
 
   @OneToOne((type) => Country)
   @JoinColumn()

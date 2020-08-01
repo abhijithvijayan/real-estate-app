@@ -142,7 +142,7 @@ class PropertyController {
       } catch (err) {
         console.log(err);
 
-        // Todo: Possibly ends up here if user doesn't exist(but middlewares should probably get that before)
+        // Todo: Possibly ends up here if user doesn't exist(but middlewares would probably get that before)
         userListing = new UserListing();
         userListing.properties = [];
       }

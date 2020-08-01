@@ -3,12 +3,14 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
   JoinColumn,
   OneToOne,
   Column,
   Entity,
 } from 'typeorm';
 
+// eslint-disable-next-line import/no-cycle
 import {ZipCode} from './ZipCode';
 
 @Entity()
@@ -22,8 +24,8 @@ export class Address {
   @Column()
   type: string;
 
-  @OneToOne((type) => ZipCode)
-  @JoinColumn()
+  // Address can have only one ZipCode
+  @ManyToOne((type) => ZipCode, (zipCode) => zipCode.addresses)
   zipCode: ZipCode;
 
   @Column()

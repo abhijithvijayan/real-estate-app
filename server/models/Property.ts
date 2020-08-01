@@ -52,6 +52,7 @@ export class Property {
   @ManyToOne((type) => UserListing, (listing) => listing.properties)
   listing: UserListing;
 
+  // Todo: many to many?
   // ManyToOne relationship to user(buyer favourites)
   @ManyToOne((type) => UserFavourite, (favourite) => favourite.properties)
   favourite: UserFavourite;
