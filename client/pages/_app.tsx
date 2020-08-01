@@ -4,15 +4,15 @@
  *  @author abhijithvijayan <https://abhijithvijayan.in>
  */
 
-import App, {AppProps, AppContext, AppInitialProps} from 'next/app';
+import App, {AppProps, AppInitialProps} from 'next/app';
 import {ThemeProvider} from 'styled-components';
 import {StoreProvider} from 'easy-peasy';
 import {useEffect} from 'react';
-import {AppProps} from 'next/app';
 import Head from 'next/head';
 import 'emoji-log';
 
 import {initializeStore, StoreModelProps} from '../state/store';
+import {decodeToken, DecodedTokenPayload} from '../util/token';
 
 // common styles
 import '../styles/main.scss';
@@ -34,12 +34,12 @@ function CustomNextApp({
   pageProps,
   initialState,
 }: AppStateProps): JSX.Element {
-  const store = initializeStore(initialState);
-
   useEffect(() => {
     // eslint-disable-next-line no-console
     console.emoji('🦄', '_app rendered');
   }, []);
+
+  const store = initializeStore(initialState);
 
   return (
     <>
@@ -67,7 +67,7 @@ function CustomNextApp({
 
 // Every page is server-side rendered.
 CustomNextApp.getInitialProps = async (
-  appContext: AppContext
+  appContext
 ): Promise<{
   initialState: any;
   pageProps: any;
@@ -77,6 +77,17 @@ CustomNextApp.getInitialProps = async (
 
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps: AppInitialProps = await App.getInitialProps(appContext);
+
+  // Todo: `AppContext` is not assigned as TS is causing issues when accessing `cookies` object
+  const token: string | null = appContext.ctx?.req?.cookies?.token || null;
+
+  const tokenPayload: DecodedTokenPayload | null = token
+    ? decodeToken(token)
+    : null;
+
+  if (tokenPayload) {
+    store.dispatch.auth.set(tokenPayload);
+  }
 
   return {...appProps, initialState: store.getState()};
 };
