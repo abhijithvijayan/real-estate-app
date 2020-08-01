@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
+  OneToMany,
   Column,
   Entity,
   Unique,
@@ -18,8 +18,8 @@ export class City {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @ManyToOne((type) => ZipCode, (zipCode) => zipCode.cities)
-  zipCode: ZipCode;
+  @OneToMany((type) => ZipCode, (zipCode) => zipCode.city)
+  zipCodes: ZipCode[];
 
   @Column({length: 64, nullable: false})
   name: string;

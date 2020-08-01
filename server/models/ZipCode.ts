@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
   OneToMany,
   Column,
   Entity,
@@ -23,17 +24,17 @@ export class ZipCode {
   @OneToMany((type) => Address, (address) => address.zipCode)
   addresses: Address[];
 
-  // ZipCode can have multiple addresses
-  @OneToMany((type) => Country, (country) => country.zipCode)
-  countries: Country[];
+  // ZipCode can have one country
+  @ManyToOne((type) => Country, (country) => country.zipCodes)
+  country: Country;
 
-  // ZipCode can have multiple addresses
-  @OneToMany((type) => State, (state) => state.zipCode)
-  states: State[];
+  // ZipCode can have one state
+  @ManyToOne((type) => State, (state) => state.zipCodes)
+  state: State;
 
-  // ZipCode can have multiple addresses
-  @OneToMany((type) => City, (city) => city.zipCode)
-  cities: City[];
+  // ZipCode can have one city
+  @ManyToOne((type) => City, (city) => city.zipCodes)
+  city: City;
 
   @Column()
   @CreateDateColumn()

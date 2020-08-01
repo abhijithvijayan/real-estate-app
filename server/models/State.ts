@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
+  OneToMany,
   Column,
   Entity,
   Unique,
@@ -18,8 +18,8 @@ export class State {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @ManyToOne((type) => ZipCode, (zipCode) => zipCode.states)
-  zipCode: ZipCode;
+  @OneToMany((type) => ZipCode, (zipCode) => zipCode.state)
+  zipCodes: ZipCode[];
 
   @Column({nullable: false})
   code: string;
