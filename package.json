@@ -28,6 +28,7 @@
   "dependencies": {
     "advanced-css-reset": "^1.2.1",
     "bcryptjs": "^2.4.3",
+    "email-validator": "^2.0.4",
     "emoji-log": "^1.0.2",
     "envalid": "^6.0.2",
     "express": "^4.17.1",
@@ -41,6 +42,7 @@
     "pg": "^8.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-use-form-state": "^0.13.1",
     "reflect-metadata": "^0.1.13",
     "styled-components": "^5.1.1",
     "tailwindcss": "^1.6.0",
