@@ -1,6 +1,7 @@
 import {Request, Response} from 'express';
 import {getRepository} from 'typeorm';
 
+import {UserFavourite} from '../models/UserFavourite';
 import {UserListing} from '../models/UserListing';
 import {Property} from '../models/Property';
 import {Address} from '../models/Address';
@@ -196,7 +197,6 @@ class PropertyController {
     }
 
     const userRepository = getRepository(User);
-    // const propertiesRepository = getRepository(Property);
 
     try {
       const user = await userRepository.findOne({
@@ -208,7 +208,6 @@ class PropertyController {
         // to load objects inside lazy relations:
         const properties: Property[] = await user.userListing.properties;
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return res.status(200).json({
           data: properties,
           status: true,
@@ -224,6 +223,96 @@ class PropertyController {
     return res
       .status(500)
       .send({message: "Error fetching user's listings", status: false});
+  };
+
+  static addOrRemoveFromFavourites = async (
+    req: Request,
+    res: Response
+  ): Promise<Response<any>> => {
+    const currentUser = req.user as User | undefined;
+
+    if (currentUser === undefined) {
+      return res.status(401).send('No such user');
+    }
+
+    const {action, listingId}: {action: 0 | 1; listingId: string} = req.body;
+    const actionMessage =
+      (action === 1 && 'Added to favourites') || 'Removed from favourites';
+    const userFavouriteRepository = getRepository(UserFavourite);
+    const propertiesRepository = getRepository(Property);
+    const userRepository = getRepository(User);
+
+    try {
+      let userFavourite: UserFavourite;
+
+      const user = await userRepository.findOne({
+        relations: ['userFavourite'],
+        where: {id: currentUser.id},
+      });
+
+      const selectedItem:
+        | Property
+        | undefined = await propertiesRepository.findOne({
+        where: {id: listingId},
+      });
+
+      if (user && selectedItem) {
+        // Existing list found
+        if (user?.userFavourite) {
+          userFavourite = user.userFavourite;
+        }
+        // No Favourite List found
+        else {
+          // save new favourites list
+          userFavourite = new UserFavourite();
+          await userFavouriteRepository.save(userFavourite);
+
+          // attach this Favourite List to user
+          user.userFavourite = userFavourite;
+          await userRepository.save(user);
+
+          // Nothing to remove as list is empty
+          if (action === 0) {
+            return res
+              .status(500)
+              .send({message: 'List is already empty', status: false});
+          }
+        }
+
+        // to load objects inside lazy relations:
+        const properties: Property[] = await userFavourite.properties;
+        const remaining: Property[] = properties.filter(
+          (property) => property.id !== selectedItem.id
+        );
+
+        // Append to favourites if item doesn't exist in list already
+        if (action === 1) {
+          userFavourite.properties = Promise.resolve([
+            selectedItem,
+            ...remaining,
+          ]); // lazy loaded
+        } else {
+          // Remove from favourites
+          userFavourite.properties = Promise.resolve(remaining); // lazy loaded
+        }
+
+        // update favourites list
+        await userFavouriteRepository.save(userFavourite);
+
+        return res.status(200).json({
+          status: true,
+          message: actionMessage,
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      //
+    }
+
+    return res
+      .status(500)
+      .send({message: 'Error performing action', status: false});
   };
 }
 

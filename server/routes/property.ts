@@ -19,4 +19,10 @@ router.get(
   asyncHandler(PropertyController.getListings)
 );
 
+router.post(
+  '/listing/favourites',
+  asyncHandler(AuthController.jwtAuth),
+  asyncHandler(PropertyController.addOrRemoveFromFavourites)
+);
+
 export default router;
