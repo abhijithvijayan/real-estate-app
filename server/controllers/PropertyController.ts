@@ -107,6 +107,7 @@ class PropertyController {
       zipCode = await zipCodeRepository.findOneOrFail({
         where: {city, state, country},
       });
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       zipCode = new ZipCode();
@@ -186,7 +187,7 @@ class PropertyController {
       .send({message: 'Listing creation of property failed', status: false});
   };
 
-  static getListings = async (
+  static getUserListings = async (
     req: Request,
     res: Response
   ): Promise<Response<any>> => {
@@ -336,6 +337,7 @@ class PropertyController {
       if (user?.userFavourite) {
         // to load objects inside lazy relations:
         const properties: Property[] = await user.userFavourite.properties;
+        // Todo: attach images once it is set
 
         return res.status(200).json({
           data: properties,
@@ -352,6 +354,41 @@ class PropertyController {
     return res
       .status(500)
       .send({message: "Error fetching user's favourites", status: false});
+  };
+
+  static getAllPropertyListings = async (
+    req: Request,
+    res: Response
+  ): Promise<Response<any>> => {
+    //
+    const propertiesRepository = getRepository(Property);
+    // Todo: attach address and all other fields
+
+    try {
+      const properties = await propertiesRepository
+        .createQueryBuilder('property')
+        .leftJoinAndSelect('property.address', 'address')
+        .leftJoinAndSelect('address.zipCode', 'zipCode')
+        .leftJoinAndSelect('zipCode.cities', 'city')
+        .leftJoinAndSelect('zipCode.states', 'state')
+        .leftJoinAndSelect('zipCode.countries', 'country')
+        .leftJoinAndSelect('property.listing', 'listing')
+        .leftJoinAndSelect('listing.user', 'owner')
+        .getMany();
+
+      return res.status(200).json({
+        data: properties,
+        status: true,
+        message: 'Fetching successful',
+      });
+    } catch (err) {
+      console.log(err);
+
+      //
+    }
+    return res
+      .status(500)
+      .send({message: 'Error fetching properties', status: false});
   };
 }
 

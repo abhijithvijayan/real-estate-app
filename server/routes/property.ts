@@ -14,9 +14,15 @@ router.post(
 );
 
 router.get(
+  '/user/listing',
+  asyncHandler(AuthController.jwtAuth),
+  asyncHandler(PropertyController.getUserListings)
+);
+
+router.get(
   '/listing',
   asyncHandler(AuthController.jwtAuth),
-  asyncHandler(PropertyController.getListings)
+  asyncHandler(PropertyController.getAllPropertyListings)
 );
 
 router.get(
