@@ -4,11 +4,15 @@
  *  @author abhijithvijayan <https://abhijithvijayan.in>
  */
 
-import 'emoji-log';
+import App, {AppProps, AppContext, AppInitialProps} from 'next/app';
+import {ThemeProvider} from 'styled-components';
+import {StoreProvider} from 'easy-peasy';
 import {useEffect} from 'react';
 import {AppProps} from 'next/app';
 import Head from 'next/head';
-import {ThemeProvider} from 'styled-components';
+import 'emoji-log';
+
+import {initializeStore, StoreModelProps} from '../state/store';
 
 // common styles
 import '../styles/main.scss';
@@ -21,7 +25,17 @@ export interface Theme {
   [key: string]: string;
 }
 
-function App({Component, pageProps}: AppProps): JSX.Element {
+interface AppStateProps extends AppProps {
+  initialState: StoreModelProps;
+}
+
+function CustomNextApp({
+  Component,
+  pageProps,
+  initialState,
+}: AppStateProps): JSX.Element {
+  const store = initializeStore(initialState);
+
   useEffect(() => {
     // eslint-disable-next-line no-console
     console.emoji('🦄', '_app rendered');
@@ -40,12 +54,31 @@ function App({Component, pageProps}: AppProps): JSX.Element {
 
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <ThemeProvider theme={theme}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <Component {...pageProps} />
-      </ThemeProvider>
+
+      <StoreProvider store={store}>
+        <ThemeProvider theme={theme}>
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </StoreProvider>
     </>
   );
 }
 
-export default App;
+// Every page is server-side rendered.
+CustomNextApp.getInitialProps = async (
+  appContext: AppContext
+): Promise<{
+  initialState: any;
+  pageProps: any;
+}> => {
+  // initialize store in server
+  const store = initializeStore();
+
+  // calls page's `getInitialProps` and fills `appProps.pageProps`
+  const appProps: AppInitialProps = await App.getInitialProps(appContext);
+
+  return {...appProps, initialState: store.getState()};
+};
+
+export default CustomNextApp;
