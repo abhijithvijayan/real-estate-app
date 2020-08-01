@@ -1,11 +1,10 @@
+/* eslint-disable import/no-cycle */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn,
   OneToMany,
-  OneToOne,
   Column,
   Entity,
 } from 'typeorm';
@@ -24,17 +23,17 @@ export class ZipCode {
   @OneToMany((type) => Address, (address) => address.zipCode)
   addresses: Address[];
 
-  @OneToOne((type) => Country)
-  @JoinColumn()
-  country: Country;
+  // ZipCode can have multiple addresses
+  @OneToMany((type) => Country, (country) => country.zipCode)
+  countries: Country[];
 
-  @OneToOne((type) => State)
-  @JoinColumn()
-  state: State;
+  // ZipCode can have multiple addresses
+  @OneToMany((type) => State, (state) => state.zipCode)
+  states: State[];
 
-  @OneToOne((type) => City)
-  @JoinColumn()
-  city: City;
+  // ZipCode can have multiple addresses
+  @OneToMany((type) => City, (city) => city.zipCode)
+  cities: City[];
 
   @Column()
   @CreateDateColumn()

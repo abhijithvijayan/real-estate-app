@@ -3,13 +3,11 @@ import {MigrationInterface, QueryRunner, getRepository} from 'typeorm';
 import {RolesSeed} from '../seeds/roles.seed';
 import {Role} from '../models/Role';
 
-export class SeedRoles1596215396877 implements MigrationInterface {
+export class SeedRoles1596264838184 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Seed roles into table
     await getRepository(Role).save(RolesSeed);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    // do nothing
-  }
+  public async down(queryRunner: QueryRunner): Promise<void> {}
 }

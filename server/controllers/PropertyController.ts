@@ -101,16 +101,24 @@ class PropertyController {
       await countryRepository.save(country);
     }
 
-    let zipCode: ZipCode | undefined = await zipCodeRepository.findOne({
-      where: {city, state, country},
-    });
-    if (!zipCode) {
+    let zipCode: ZipCode;
+    try {
+      zipCode = await zipCodeRepository.findOneOrFail({
+        where: {city, state, country},
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
       zipCode = new ZipCode();
-      zipCode.city = city;
-      zipCode.state = state;
-      zipCode.country = country;
       await zipCodeRepository.save(zipCode);
     }
+
+    // Form relationships
+    city.zipCode = zipCode;
+    await cityRepository.save(city);
+    state.zipCode = zipCode;
+    await stateRepository.save(state);
+    country.zipCode = zipCode;
+    await countryRepository.save(country);
 
     const address = new Address();
     address.street = streetName;
@@ -140,8 +148,6 @@ class PropertyController {
         userListing = user.userListing;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
-        console.log(err);
-
         // Todo: Possibly ends up here if user doesn't exist(but middlewares would probably get that before)
         userListing = new UserListing();
         userListing.properties = [];
@@ -153,8 +159,6 @@ class PropertyController {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      console.log(err);
-
       return res
         .status(500)
         .send({message: 'Listing creation of property failed'});
