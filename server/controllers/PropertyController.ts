@@ -314,6 +314,45 @@ class PropertyController {
       .status(500)
       .send({message: 'Error performing action', status: false});
   };
+
+  static getFavourites = async (
+    req: Request,
+    res: Response
+  ): Promise<Response<any>> => {
+    const currentUser = req.user as User | undefined;
+
+    if (currentUser === undefined) {
+      return res.status(401).send('No such user');
+    }
+
+    const userRepository = getRepository(User);
+
+    try {
+      const user = await userRepository.findOne({
+        relations: ['userFavourite'],
+        where: {id: currentUser.id},
+      });
+
+      if (user?.userFavourite) {
+        // to load objects inside lazy relations:
+        const properties: Property[] = await user.userFavourite.properties;
+
+        return res.status(200).json({
+          data: properties,
+          status: true,
+          message: 'Fetching successful',
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      //
+    }
+
+    return res
+      .status(500)
+      .send({message: "Error fetching user's favourites", status: false});
+  };
 }
 
 export default PropertyController;

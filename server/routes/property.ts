@@ -19,6 +19,12 @@ router.get(
   asyncHandler(PropertyController.getListings)
 );
 
+router.get(
+  '/listing/favourites',
+  asyncHandler(AuthController.jwtAuth),
+  asyncHandler(PropertyController.getFavourites)
+);
+
 router.post(
   '/listing/favourites',
   asyncHandler(AuthController.jwtAuth),
