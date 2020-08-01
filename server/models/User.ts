@@ -32,7 +32,7 @@ export class User {
   @Column({length: 64, nullable: false})
   email: string;
 
-  @Column()
+  @Column({select: false})
   password: string;
 
   // ManyToOne relationship to role
@@ -46,7 +46,7 @@ export class User {
   userFavourite: UserFavourite;
 
   // OneToOne relationship to UserListing(buyer listings)
-  @OneToOne((type) => UserListing)
+  @OneToOne((type) => UserListing, (listing) => listing.user) // specify inverse side as a second parameter
   @JoinColumn()
   userListing: UserListing;
 
