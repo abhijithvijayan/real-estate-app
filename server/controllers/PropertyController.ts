@@ -107,20 +107,14 @@ class PropertyController {
       zipCode = await zipCodeRepository.findOneOrFail({
         where: {city, state, country},
       });
-
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       zipCode = new ZipCode();
+      zipCode.city = city;
+      zipCode.state = state;
+      zipCode.country = country;
       await zipCodeRepository.save(zipCode);
     }
-
-    // Form relationships
-    city.zipCode = zipCode;
-    await cityRepository.save(city);
-    state.zipCode = zipCode;
-    await stateRepository.save(state);
-    country.zipCode = zipCode;
-    await countryRepository.save(country);
 
     const address = new Address();
     address.street = streetName;
@@ -369,11 +363,11 @@ class PropertyController {
         .createQueryBuilder('property')
         .leftJoinAndSelect('property.address', 'address')
         .leftJoinAndSelect('address.zipCode', 'zipCode')
-        .leftJoinAndSelect('zipCode.cities', 'city')
-        .leftJoinAndSelect('zipCode.states', 'state')
-        .leftJoinAndSelect('zipCode.countries', 'country')
-        .leftJoinAndSelect('property.listing', 'listing')
-        .leftJoinAndSelect('listing.user', 'owner')
+        .leftJoinAndSelect('zipCode.city', 'city')
+        .leftJoinAndSelect('zipCode.state', 'state')
+        .leftJoinAndSelect('zipCode.country', 'country')
+        .leftJoinAndSelect('property.listing', 'seller') // this is being lazy loaded
+        .leftJoinAndSelect('seller.user', 'owner') // so output doesn't reflect owner field
         .getMany();
 
       return res.status(200).json({
@@ -381,9 +375,8 @@ class PropertyController {
         status: true,
         message: 'Fetching successful',
       });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      console.log(err);
-
       //
     }
     return res
