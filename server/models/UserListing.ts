@@ -21,7 +21,7 @@ export class UserListing {
   id: string;
 
   @OneToMany((type) => Property, (property) => property.listing)
-  properties: Property[];
+  properties: Promise<Property[]>;
 
   @Column()
   @CreateDateColumn()

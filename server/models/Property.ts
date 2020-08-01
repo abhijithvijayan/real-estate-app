@@ -50,7 +50,7 @@ export class Property {
 
   // ManyToOne relationship to user(seller listing)
   @ManyToOne((type) => UserListing, (listing) => listing.properties)
-  listing: UserListing;
+  listing: Promise<UserListing>;
 
   // Todo: many to many?
   // ManyToOne relationship to user(buyer favourites)

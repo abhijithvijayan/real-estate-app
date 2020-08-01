@@ -132,39 +132,57 @@ class PropertyController {
 
     try {
       await addressRepository.save(address);
-
-      // save property
       property.address = address;
-      await propertiesRepository.save(property);
 
       // check if user listing exist, if not, create one
       // save to a user's listing
       let userListing: UserListing;
+      let user: User | undefined;
       try {
-        const user = await userRepository.findOneOrFail({
-          relations: ['user_listing'],
+        user = await userRepository.findOneOrFail({
+          relations: ['userListing'],
           where: {id: currentUser.id},
         });
-        userListing = user.userListing;
+
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         // Todo: Possibly ends up here if user doesn't exist(but middlewares would probably get that before)
-        userListing = new UserListing();
-        userListing.properties = [];
       }
 
-      // save or append to user's listing
-      userListing.properties = [...userListing.properties, property];
-      await userListingRepository.save(userListing);
+      if (user) {
+        // Existing list found
+        if (user?.userListing) {
+          userListing = user.userListing;
+        }
+        // No listing found
+        else {
+          // save new listing
+          userListing = new UserListing();
+          await userListingRepository.save(userListing);
+          // attach this listing to user
+          user.userListing = userListing;
+          await userRepository.save(user);
+        }
+
+        // append property to the listing(by updating property's listing relationship)
+        property.listing = Promise.resolve(userListing); // lazy loaded
+
+        // save property
+        await propertiesRepository.save(property);
+
+        return res
+          .status(201)
+          .send({message: 'Listing of property successful.'});
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      return res
-        .status(500)
-        .send({message: 'Listing creation of property failed'});
+      //
     }
 
-    return res.status(201).send({message: 'Listing of property successful.'});
+    return res
+      .status(500)
+      .send({message: 'Listing creation of property failed'});
   };
 }
 
