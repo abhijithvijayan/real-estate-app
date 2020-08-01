@@ -5,9 +5,15 @@ import {
   EasyPeasyConfig,
 } from 'easy-peasy';
 
-export type StoreModelProps = {};
+import {Auth, auth} from './auth';
 
-const model: StoreModelProps = {};
+export type StoreModelProps = {
+  auth: Auth;
+};
+
+const model: StoreModelProps = {
+  auth,
+};
 
 // Provide our model to the helper
 const typedHooks = createTypedHooks<StoreModelProps>();
