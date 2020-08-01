@@ -1,5 +1,6 @@
-import passport from 'passport';
 import express, {Express, Request, Response} from 'express';
+import cookieParser from 'cookie-parser';
+import passport from 'passport';
 import morgan from 'morgan';
 import nextApp from 'next';
 
@@ -18,6 +19,7 @@ app.prepare().then(() => {
   const server: Express = express();
 
   server.set('port', env.PORT);
+  server.use(cookieParser());
   server.use(express.json());
   server.use(express.urlencoded({extended: true}));
   server.use(passport.initialize());
