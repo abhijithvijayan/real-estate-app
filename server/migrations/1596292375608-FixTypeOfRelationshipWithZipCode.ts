@@ -1,13 +1,13 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class DoNotSelectPasswordField1596289610924 implements MigrationInterface {
-    name = 'DoNotSelectPasswordField1596289610924'
+export class FixTypeOfRelationshipWithZipCode1596292375608 implements MigrationInterface {
+    name = 'FixTypeOfRelationshipWithZipCode1596292375608'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "country" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying NOT NULL, "name" character varying(64) NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "zipCodeId" uuid, CONSTRAINT "UQ_0df1ffc03f0ce86e81a9d6cef1e" UNIQUE ("name", "code"), CONSTRAINT "PK_bf6e37c231c4f4ea56dcd887269" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "state" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying NOT NULL, "name" character varying(64) NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "zipCodeId" uuid, CONSTRAINT "UQ_2f3ca6bb9144e7ae3dde21209a5" UNIQUE ("code", "name"), CONSTRAINT "PK_549ffd046ebab1336c3a8030a12" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "city" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(64) NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "zipCodeId" uuid, CONSTRAINT "UQ_f8c0858628830a35f19efdc0ecf" UNIQUE ("name"), CONSTRAINT "PK_b222f51ce26f7e5ca86944a6739" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "zip_code" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_23e29929d32a535be7820652aad" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "country" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying NOT NULL, "name" character varying(64) NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_0df1ffc03f0ce86e81a9d6cef1e" UNIQUE ("name", "code"), CONSTRAINT "PK_bf6e37c231c4f4ea56dcd887269" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "state" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying NOT NULL, "name" character varying(64) NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_2f3ca6bb9144e7ae3dde21209a5" UNIQUE ("code", "name"), CONSTRAINT "PK_549ffd046ebab1336c3a8030a12" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "city" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(64) NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_f8c0858628830a35f19efdc0ecf" UNIQUE ("name"), CONSTRAINT "PK_b222f51ce26f7e5ca86944a6739" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "zip_code" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "countryId" uuid, "stateId" uuid, "cityId" uuid, CONSTRAINT "PK_23e29929d32a535be7820652aad" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "address" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "street" character varying(96) NOT NULL, "type" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "zipCodeId" uuid, CONSTRAINT "PK_d92de1f82754668b5f5f5dd4fd5" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "user_favourite" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_b948b7e965123f9ca0b60383334" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "role" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(50) NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_ae4578dcaed5adff96595e61660" UNIQUE ("name"), CONSTRAINT "PK_b36bcfe02fc8de3c57a8b2391c2" PRIMARY KEY ("id"))`);
@@ -20,9 +20,9 @@ export class DoNotSelectPasswordField1596289610924 implements MigrationInterface
         await queryRunner.query(`CREATE TABLE "user_roles_role" ("userId" uuid NOT NULL, "roleId" uuid NOT NULL, CONSTRAINT "PK_b47cd6c84ee205ac5a713718292" PRIMARY KEY ("userId", "roleId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_5f9286e6c25594c6b88c108db7" ON "user_roles_role" ("userId") `);
         await queryRunner.query(`CREATE INDEX "IDX_4be2f7adf862634f5f803d246b" ON "user_roles_role" ("roleId") `);
-        await queryRunner.query(`ALTER TABLE "country" ADD CONSTRAINT "FK_7b604eff9aabd76a42dd663055d" FOREIGN KEY ("zipCodeId") REFERENCES "zip_code"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "state" ADD CONSTRAINT "FK_f674ba24cddd227f679b89b273a" FOREIGN KEY ("zipCodeId") REFERENCES "zip_code"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "city" ADD CONSTRAINT "FK_64fbd0251e6288038179977d380" FOREIGN KEY ("zipCodeId") REFERENCES "zip_code"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "zip_code" ADD CONSTRAINT "FK_4c935ec36e6e8d3af3c8ae3590c" FOREIGN KEY ("countryId") REFERENCES "country"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "zip_code" ADD CONSTRAINT "FK_905cfb30a9599192a4ab4c9443c" FOREIGN KEY ("stateId") REFERENCES "state"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "zip_code" ADD CONSTRAINT "FK_5bbe448e83da2b8be1846638630" FOREIGN KEY ("cityId") REFERENCES "city"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "address" ADD CONSTRAINT "FK_5614fb41e9fe1e998f6b1de6d01" FOREIGN KEY ("zipCodeId") REFERENCES "zip_code"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "user" ADD CONSTRAINT "FK_5ff4ab0aa571d2b17ae77c3c411" FOREIGN KEY ("userFavouriteId") REFERENCES "user_favourite"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "user" ADD CONSTRAINT "FK_fb3cd5c1672f44ec7c840df0595" FOREIGN KEY ("userListingId") REFERENCES "user_listing"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -44,9 +44,9 @@ export class DoNotSelectPasswordField1596289610924 implements MigrationInterface
         await queryRunner.query(`ALTER TABLE "user" DROP CONSTRAINT "FK_fb3cd5c1672f44ec7c840df0595"`);
         await queryRunner.query(`ALTER TABLE "user" DROP CONSTRAINT "FK_5ff4ab0aa571d2b17ae77c3c411"`);
         await queryRunner.query(`ALTER TABLE "address" DROP CONSTRAINT "FK_5614fb41e9fe1e998f6b1de6d01"`);
-        await queryRunner.query(`ALTER TABLE "city" DROP CONSTRAINT "FK_64fbd0251e6288038179977d380"`);
-        await queryRunner.query(`ALTER TABLE "state" DROP CONSTRAINT "FK_f674ba24cddd227f679b89b273a"`);
-        await queryRunner.query(`ALTER TABLE "country" DROP CONSTRAINT "FK_7b604eff9aabd76a42dd663055d"`);
+        await queryRunner.query(`ALTER TABLE "zip_code" DROP CONSTRAINT "FK_5bbe448e83da2b8be1846638630"`);
+        await queryRunner.query(`ALTER TABLE "zip_code" DROP CONSTRAINT "FK_905cfb30a9599192a4ab4c9443c"`);
+        await queryRunner.query(`ALTER TABLE "zip_code" DROP CONSTRAINT "FK_4c935ec36e6e8d3af3c8ae3590c"`);
         await queryRunner.query(`DROP INDEX "IDX_4be2f7adf862634f5f803d246b"`);
         await queryRunner.query(`DROP INDEX "IDX_5f9286e6c25594c6b88c108db7"`);
         await queryRunner.query(`DROP TABLE "user_roles_role"`);

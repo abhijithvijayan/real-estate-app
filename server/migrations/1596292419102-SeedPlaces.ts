@@ -5,7 +5,7 @@ import {Country} from '../models/Country';
 import {State} from '../models/State';
 import {City} from '../models/City';
 
-export class SeedPlaces1596289622274 implements MigrationInterface {
+export class SeedPlaces1596292419102 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Seed locations into table
     await getRepository(City).save(CitySeed);
