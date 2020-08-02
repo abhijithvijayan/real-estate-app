@@ -8,22 +8,21 @@ export enum AppRoutes {
   SETTINGS = '/settings',
 }
 
-export type FavouritePropertyListing = {
-  id: string;
-  squareMeter: string;
-  shortDescription: string;
-  longDescription: string;
-  noOfRooms: number;
-  noOfBedRooms: number;
-  noOfBathRooms: number;
-  createdAt: string;
-  updatedAt: string;
+export type FavouritePropertyIdsResponse = {
+  status: boolean;
+  message: string;
+  data: string[];
 };
 
 export type FavouritePropertyListingResponse = {
   status: boolean;
   message: string;
-  data: FavouritePropertyListing[];
+  data: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    __properties__: PropertyListing[];
+  };
 };
 
 export type PropertyListing = {
@@ -102,6 +101,7 @@ export enum PropertyApiRoutes {
   GET_PROPERTY_LISTINGS = 'getPropertyListings',
   PROPERTY_FAVOURITE_ACTION = 'propertyFavouriteAction',
   LIST_FAVOURITE_PROPERTIES = 'listFavouriteProperties',
+  FAVOURITE_PROPERTIES_IDS = 'favouritePropertiesIds',
 }
 
 export type Routes = PropertyApiRoutes | AuthApiRoutes;
@@ -121,7 +121,6 @@ const endpoints: Endpoints = {
 
   getPropertyListings: {
     path: '/api/v1/property/listing',
-    method: 'GET',
   },
 
   propertyFavouriteAction: {
@@ -131,7 +130,10 @@ const endpoints: Endpoints = {
 
   listFavouriteProperties: {
     path: '/api/v1/property/listing/favourites/all',
-    method: 'GET',
+  },
+
+  favouritePropertiesIds: {
+    path: '/api/v1/property/listing/favourites/ids',
   },
 };
 

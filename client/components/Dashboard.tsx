@@ -3,17 +3,14 @@ import tw, {css} from 'twin.macro';
 
 import ListingCard from './ListingCard';
 
-import {PropertyListing, FavouritePropertyListing} from '../api/constants';
+import {PropertyListing} from '../api/constants';
 
 type Props = {
   listings: PropertyListing[];
-  favourites: FavouritePropertyListing[];
+  favourites: string[];
 };
 
 const DashboardPage: React.FC<Props> = ({listings, favourites}) => {
-  const favouritePropertyIdCollection = favourites.map((item) => item.id);
-  // Todo: get action value from listing itself
-
   return (
     <>
       <section tw="flex flex-1 flex-col sm:flex-row">
@@ -29,9 +26,7 @@ const DashboardPage: React.FC<Props> = ({listings, favourites}) => {
         >
           <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
             {listings.map((item) => {
-              const isInFavourites: boolean = favouritePropertyIdCollection.includes(
-                item.id
-              );
+              const isInFavourites: boolean = favourites.includes(item.id);
 
               return (
                 <ListingCard

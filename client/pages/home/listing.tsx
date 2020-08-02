@@ -14,7 +14,7 @@ import {getToken, getCookieFromReq} from '../../util/token';
 import useGetRequest from '../../api/useGetRequest';
 import {useStoreState} from '../../state/store';
 import {
-  FavouritePropertyListingResponse,
+  FavouritePropertyIdsResponse,
   ProductsListingResponse,
   PropertyApiRoutes,
   getEndpointProps,
@@ -23,23 +23,23 @@ import {
 import api from '../../api';
 
 interface AppStateProps {
-  favourites?: FavouritePropertyListingResponse;
+  favourites?: FavouritePropertyIdsResponse;
   error: boolean;
 }
 
 const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
 
-  // swr
-  const {data: userFavourites} = useGetRequest<
-    FavouritePropertyListingResponse
-  >(
+  // get id's using swr
+  const {data: userFavourites} = useGetRequest<FavouritePropertyIdsResponse>(
     {
-      url: getEndpointProps(PropertyApiRoutes.LIST_FAVOURITE_PROPERTIES).path,
+      url: getEndpointProps(PropertyApiRoutes.FAVOURITE_PROPERTIES_IDS).path,
       headers: {Authorization: `Bearer ${getToken()}`},
     },
     {initialData: favourites}
   );
+
+  // get property listings using swr
   const {data: listings, error: listingsError} = useGetRequest<
     ProductsListingResponse
   >({
@@ -100,8 +100,8 @@ ListingPage.getInitialProps = async (appContext: NextPageContext) => {
     const token: string | null = getCookieFromReq(appContext?.req);
 
     if (token) {
-      const {data}: {data: FavouritePropertyListingResponse} = await api({
-        key: PropertyApiRoutes.LIST_FAVOURITE_PROPERTIES,
+      const {data}: {data: FavouritePropertyIdsResponse} = await api({
+        key: PropertyApiRoutes.FAVOURITE_PROPERTIES_IDS,
         isServer: true,
         token,
       });
