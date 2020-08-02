@@ -1,4 +1,5 @@
 import {parseCookies, setCookie, destroyCookie} from 'nookies';
+import {IncomingMessage} from 'http';
 import decode from 'jwt-decode';
 
 enum Expiry {
@@ -20,6 +21,23 @@ export function getToken(): string {
   const cookies = parseCookies();
 
   return cookies.token;
+}
+
+// From server only
+export function getCookieFromReq(req?: IncomingMessage): string | null {
+  if (req) {
+    const cookie = req?.headers?.cookie
+      ?.split(';')
+      ?.find((c) => c.trim().startsWith('token='));
+
+    if (!cookie) {
+      return null;
+    }
+
+    return cookie.split('=')[1];
+  }
+
+  return null;
 }
 
 export function removeToken(): unknown {

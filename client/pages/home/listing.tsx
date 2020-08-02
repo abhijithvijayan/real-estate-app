@@ -10,9 +10,9 @@ import Header from '../../components/Header';
 import Loader from '../../components/Loader';
 
 import {SidebarContextProvider} from '../../contexts/sidebar-context';
+import {getToken, getCookieFromReq} from '../../util/token';
 import useGetRequest from '../../api/useGetRequest';
 import {useStoreState} from '../../state/store';
-import {getToken} from '../../util/token';
 import {
   FavouritePropertyListingResponse,
   ProductsListingResponse,
@@ -93,24 +93,11 @@ const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
   );
 };
 
-const getCookieFromReq = (req, cookieKey): string | null => {
-  const cookie = req?.headers?.cookie
-    ?.split(';')
-    ?.find((c) => c.trim().startsWith(`${cookieKey}=`));
-
-  if (!cookie) {
-    return null;
-  }
-
-  return cookie.split('=')[1];
-};
-
 // page is server-side rendered.
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 ListingPage.getInitialProps = async (appContext: NextPageContext) => {
   try {
-    // Parse
-    const token: string | null = getCookieFromReq(appContext?.req, 'token');
+    const token: string | null = getCookieFromReq(appContext?.req);
 
     if (token) {
       const {data}: {data: FavouritePropertyListingResponse} = await api({
