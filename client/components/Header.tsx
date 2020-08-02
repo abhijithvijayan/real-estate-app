@@ -71,7 +71,7 @@ const Header: React.FC = () => {
                     </a>
                   </Link>
 
-                  <Link href="/logout">
+                  <Link href="/signout">
                     <a tw="hover:bg-indigo-600 hover:text-white block px-4 py-2 text-sm text-gray-700 cursor-pointer">
                       Logout
                     </a>
