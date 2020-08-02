@@ -53,7 +53,7 @@ function fireUpApiRequest({
   };
 
   if (!request.noAuth) {
-    config.headers.Authorization = getToken();
+    config.headers.Authorization = `Bearer ${getToken()}`;
   }
 
   return axiosInstance({
