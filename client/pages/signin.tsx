@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      Router.push(AppRoutes.PROPERTIES_LISTING);
+      Router.push(AppRoutes.PROPERTIES_LISTINGS);
     }
   }, [isAuthenticated]);
 

@@ -12,7 +12,7 @@ const IndexPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      Router.push(AppRoutes.PROPERTIES_LISTING);
+      Router.push(AppRoutes.PROPERTIES_LISTINGS);
     } else {
       Router.push(AppRoutes.SIGN_IN);
     }

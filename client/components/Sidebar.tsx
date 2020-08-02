@@ -41,10 +41,18 @@ const Sidebar: React.FC = () => {
 
         <nav tw="mt-10">
           <Link href={AppRoutes.ROOT}>
-            <a tw="flex items-center px-6 py-2 mt-4 text-purple-500 cursor-pointer">
+            <a tw="flex items-center px-6 py-2 mt-4 text-purple-500 cursor-pointer font-medium">
               <Icon name="inbox" />
 
               <span tw="mx-4">Dashboard</span>
+            </a>
+          </Link>
+
+          <Link href={AppRoutes.LIKED_LISTINGS}>
+            <a tw="hover:bg-opacity-25 hover:text-gray-900 flex items-center px-6 py-2 mt-4 text-gray-700 cursor-pointer">
+              <Icon name="heart" />
+
+              <span tw="mx-4">Saved</span>
             </a>
           </Link>
 

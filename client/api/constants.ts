@@ -3,9 +3,10 @@ export enum AppRoutes {
   SIGN_UP = '/signup',
   SIGN_OUT = '/signout',
   ROOT = '/',
-  PROPERTIES_LISTING = '/home/listing',
   PROFILE = '/profile',
   SETTINGS = '/settings',
+  LIKED_LISTINGS = '/favourites',
+  PROPERTIES_LISTINGS = '/home/listing',
 }
 
 export type FavouritePropertyIdsResponse = {
