@@ -1,4 +1,4 @@
-import {NextPage, NextPageContext} from 'next';
+import {NextPageContext} from 'next';
 import React, {useEffect} from 'react';
 import Router from 'next/router';
 import 'twin.macro';
@@ -7,6 +7,7 @@ import BodyWrapper from '../../components/BodyWrapper';
 import DashboardPage from '../../components/Dashboard';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
+import Loader from '../../components/Loader';
 
 import {SidebarContextProvider} from '../../contexts/sidebar-context';
 import useGetRequest from '../../api/useGetRequest';
@@ -14,7 +15,6 @@ import {useStoreState} from '../../state/store';
 import {getToken} from '../../util/token';
 import {
   FavouritePropertyListingResponse,
-  FavouritePropertyListing,
   ProductsListingResponse,
   PropertyApiRoutes,
   getEndpointProps,
@@ -61,7 +61,11 @@ const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
   }
 
   if (!listings) {
-    return <div>loading...</div>;
+    return (
+      <BodyWrapper>
+        <Loader />
+      </BodyWrapper>
+    );
   }
 
   return (
@@ -107,8 +111,6 @@ ListingPage.getInitialProps = async (appContext: NextPageContext) => {
     // Parse
     const token: string | null = getCookieFromReq(appContext?.req, 'token');
 
-    console.log('no token', token);
-
     if (token) {
       const {data}: {data: FavouritePropertyListingResponse} = await api({
         key: PropertyApiRoutes.LIST_FAVOURITE_PROPERTIES,
@@ -118,9 +120,9 @@ ListingPage.getInitialProps = async (appContext: NextPageContext) => {
 
       return {props: {error: false, favourites: data}};
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     console.log('SSR Error!');
-    // console.log(err);
   }
 
   return {props: {error: true}};

@@ -1,24 +1,51 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import {useFormState} from 'react-use-form-state';
+import React, {useState, useEffect} from 'react';
 import tw, {css} from 'twin.macro';
-import React from 'react';
 
 import Icon from './Icon';
 
-import {PropertyListing} from '../api/constants';
+import {PropertyListing, PropertyApiRoutes} from '../api/constants';
+import api from '../api';
 
 type Props = {
-  handleSubmit(id: string, checked: boolean): Promise<void>;
   item: PropertyListing;
+  favourite: boolean;
 };
 
-const ListingCard: React.FC<Props> = ({item, handleSubmit}) => {
+const ListingCard: React.FC<Props> = ({item, favourite}) => {
   const [
-    formState,
+    {setField, values},
     {checkbox: checkboxProps, label: labelProps},
   ] = useFormState<{
     action: boolean;
-  }>({action: false}, {withIds: true});
+  }>({action: favourite});
+
+  const [liked, setLiked] = useState<boolean>(values.action);
+
+  useEffect(() => {
+    setLiked(favourite);
+    setField('action', favourite);
+  }, [favourite, setField]);
+
+  async function handleSubmit(id: string, checked: boolean): Promise<void> {
+    const action = checked ? 1 : 0;
+
+    try {
+      const {data}: {data: {status: boolean; message: string}} = await api({
+        key: PropertyApiRoutes.PROPERTY_FAVOURITE_ACTION,
+        params: {listingId: id, action},
+      });
+
+      if (data.status) {
+        // check/uncheck action was successful
+        setLiked(checked);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      // backend error
+    }
+  }
 
   return (
     <>
@@ -54,16 +81,15 @@ const ListingCard: React.FC<Props> = ({item, handleSubmit}) => {
         <div tw="flex items-center justify-end px-4 pt-2 pb-4">
           <div
             tw="inline-flex"
+            {...labelProps('action')}
             onClick={(): void => {
-              handleSubmit(item.id, formState.values.action);
+              handleSubmit(item.id, !values.action);
             }}
           >
-            <label
-              {...labelProps('action')}
-              tw="block font-bold text-gray-500 cursor-pointer "
-            >
+            <label tw="block font-bold text-gray-500 cursor-pointer ">
               <input
                 {...checkboxProps('action')}
+                name={item.id}
                 tw="mr-2 leading-tight hidden"
               />
               <Icon
@@ -71,15 +97,12 @@ const ListingCard: React.FC<Props> = ({item, handleSubmit}) => {
                 css={[
                   tw`hover:text-gray-800 mr-3 text-gray-600 cursor-pointer`,
 
-                  // liked &&
-                  //   formState.values.action &&
-                  //   selectedId &&
-                  //   selectedId === item.id &&
-                  css`
-                    svg {
-                      fill: rgba(45, 55, 72, var(--text-opacity));
-                    }
-                  `,
+                  liked &&
+                    css`
+                      svg {
+                        fill: rgba(45, 55, 72, var(--text-opacity));
+                      }
+                    `,
                 ]}
               />
             </label>
