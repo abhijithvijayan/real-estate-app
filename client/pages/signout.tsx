@@ -20,6 +20,7 @@ const LogoutPage = (): JSX.Element => {
   return <div />;
 };
 
+// This doesn't work sometimes
 LogoutPage.getInitialProps = async (
   appContext: AppContext
 ): Promise<unknown> => {

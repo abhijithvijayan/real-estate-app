@@ -2,18 +2,20 @@ import {parseCookies, setCookie} from 'nookies';
 import {IncomingMessage} from 'http';
 import decode from 'jwt-decode';
 
-enum Expiry {
-  COOKIE_EXPIRY = 7 * 24 * 60 * 60,
+enum Cookie {
+  TOKEN = 'token',
+  PATH = '/',
 }
 
-export function saveToken(
-  jwt: string,
-  expires = Expiry.COOKIE_EXPIRY as number
-): unknown {
-  return setCookie(null, 'token', jwt, {
+export function saveToken(jwt: string, expires = 7 * 24 * 60 * 60): unknown {
+  return setCookie(null, Cookie.TOKEN, jwt, {
     maxAge: expires,
-    path: '/',
+    path: Cookie.PATH,
   });
+}
+
+export function removeToken(): string {
+  return (document.cookie = `${Cookie.TOKEN}=; Path=${Cookie.PATH}; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`);
 }
 
 // From client only (https://www.npmjs.com/package/nookies#client-only-cookies)
