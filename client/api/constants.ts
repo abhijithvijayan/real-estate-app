@@ -94,7 +94,8 @@ export type ProductsListingResponse = {
 // **** ---------------------------- **** //
 
 export enum AuthApiRoutes {
-  LOGIN = 'login',
+  SIGN_IN = 'signin',
+  SIGN_UP = 'signup',
 }
 
 export enum PropertyApiRoutes {
@@ -106,8 +107,14 @@ export enum PropertyApiRoutes {
 export type Routes = PropertyApiRoutes | AuthApiRoutes;
 
 const endpoints: Endpoints = {
-  login: {
+  signin: {
     path: '/api/v1/auth/signin',
+    method: 'POST',
+    noAuth: true,
+  },
+
+  signup: {
+    path: '/api/v1/auth/signup',
     method: 'POST',
     noAuth: true,
   },

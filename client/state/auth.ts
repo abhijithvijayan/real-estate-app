@@ -9,6 +9,12 @@ type AuthUserProps = {
   password: string;
 };
 
+type SignUpProps = {
+  email: string;
+  password: string;
+  role: number;
+};
+
 type AuthSuccessResponse = {
   data: {
     status: true;
@@ -21,8 +27,10 @@ export interface Auth {
   email: string | null;
   isAuthenticated: Computed<Auth, boolean>;
   set: Action<Auth, DecodedTokenPayload>;
+  decodeAndSetToken: Action<Auth, {token: string}>;
   logout: Action<Auth>;
-  login: Thunk<Auth, AuthUserProps>;
+  signup: Thunk<Auth, SignUpProps>;
+  signin: Thunk<Auth, AuthUserProps>;
 }
 
 export const auth: Auth = {
@@ -37,25 +45,46 @@ export const auth: Auth = {
     state.email = null;
   }),
 
-  login: thunk(
+  decodeAndSetToken: action((state, payload) => {
+    const {token} = payload;
+    // Save jwt to cookie
+    saveToken(token);
+    // decode token and authenticate
+    const decoded: DecodedTokenPayload | null = decodeToken(token);
+
+    if (decoded) {
+      state.email = decoded.email;
+    }
+  }),
+
+  signup: thunk(
     async (actions, payload): Promise<void> => {
       // API call
       const {data: response}: AuthSuccessResponse = await api({
-        key: AuthApiRoutes.LOGIN,
+        key: AuthApiRoutes.SIGN_UP,
         params: payload,
       });
 
       const {status, token} = response;
 
       if (status) {
-        // Save jwt to cookie
-        saveToken(token);
-        // decode token and authenticate
-        const decoded: DecodedTokenPayload | null = decodeToken(token);
+        actions.decodeAndSetToken({token});
+      }
+    }
+  ),
 
-        if (decoded) {
-          actions.set(decoded);
-        }
+  signin: thunk(
+    async (actions, payload): Promise<void> => {
+      // API call
+      const {data: response}: AuthSuccessResponse = await api({
+        key: AuthApiRoutes.SIGN_IN,
+        params: payload,
+      });
+
+      const {status, token} = response;
+
+      if (status) {
+        actions.decodeAndSetToken({token});
       }
     }
   ),

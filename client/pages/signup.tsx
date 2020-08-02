@@ -8,11 +8,12 @@ import 'twin.macro';
 
 import BodyWrapper from '../components/BodyWrapper';
 
-import {useStoreState} from '../state/store';
+import {useStoreState, useStoreActions} from '../state/store';
 import {AppRoutes} from '../api/constants';
 
 const LoginPage: React.FC = () => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
+  const {signup} = useStoreActions((s) => s.auth);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -62,21 +63,17 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log('submitted', formState.values);
+      await signup({
+        email: formState.values.email.trim(),
+        password: formState.values.password.trim(),
+        role: formState.values.isSeller ? 1 : 0,
+      });
 
-      // return;
+      return;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      // backend response
-      if (err?.response?.data?.response) {
-        // const {
-        //   data: {response},
-        // } = err.response;
-        // if (response && response.statusText) {
-        //   setError(response.statusText);
-        // }
-      } else {
-        setError('Error: Backend error');
-      }
+      // todo: backend response
+      setError('Error: Backend error');
     }
 
     setLoading(false);

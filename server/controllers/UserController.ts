@@ -1,4 +1,4 @@
-import {Request, Response} from 'express';
+import {Request, Response, NextFunction} from 'express';
 import {getRepository} from 'typeorm';
 
 import {Role, UserRole} from '../models/Role';
@@ -7,8 +7,9 @@ import {User} from '../models/User';
 class UserController {
   static signup = async (
     req: Request,
-    res: Response
-  ): Promise<Response<any>> => {
+    res: Response,
+    next: NextFunction
+  ): Promise<void | Response<any>> => {
     const {
       email,
       password,
@@ -40,7 +41,12 @@ class UserController {
         .send({message: 'Email already in use', status: false});
     }
 
-    return res.status(201).send({message: 'Signup successful.', status: true});
+    req.user = {
+      ...user,
+      // Todo: attach admin flag
+    };
+
+    return next();
   };
 }
 

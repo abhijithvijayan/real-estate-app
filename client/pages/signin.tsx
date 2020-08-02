@@ -13,6 +13,7 @@ import {AppRoutes} from '../api/constants';
 
 const LoginPage: React.FC = () => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
+  const {signin} = useStoreActions((s) => s.auth);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -29,8 +30,6 @@ const LoginPage: React.FC = () => {
   }>(null, {withIds: true});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
-
-  const {login} = useStoreActions((s) => s.auth);
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
@@ -58,25 +57,16 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await login({
+      await signin({
         email: formState.values.email.trim(),
         password: formState.values.password.trim(),
       });
 
       return;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       // backend response
-      if (err?.response?.data?.response) {
-        // invalid password
-        // const {
-        //   data: {response},
-        // } = err.response;
-        // if (response && response.statusText) {
-        //   setError(response.statusText);
-        // }
-      } else {
-        setError('Error: Backend error');
-      }
+      setError('Error: Backend error');
     }
 
     setLoading(false);
@@ -98,7 +88,7 @@ const LoginPage: React.FC = () => {
                 </p>
 
                 <span tw="mt-1 text-center text-gray-600">
-                  Login to your account
+                  Sign In to your account
                 </span>
 
                 <form onSubmit={handleSubmit}>
