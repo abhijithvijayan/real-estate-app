@@ -23,11 +23,15 @@ import {
 import api from '../../api';
 
 interface AppStateProps {
-  favourites?: FavouritePropertyIdsResponse;
+  initialFavourites?: FavouritePropertyIdsResponse;
+  initialListings?: PropertiesListingResponse;
   error: boolean;
 }
 
-const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
+const ListingPage = ({
+  initialFavourites,
+  initialListings,
+}: AppStateProps): JSX.Element => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
 
   // get id's using swr
@@ -38,16 +42,19 @@ const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
       url: getEndpointProps(PropertyApiRoutes.FAVOURITE_PROPERTIES_IDS).path,
       headers: {Authorization: `Bearer ${getToken()}`},
     },
-    {initialData: favourites}
+    {initialData: initialFavourites}
   );
 
   // get property listings using swr
   const {data: listings, error: listingsError} = useGetRequest<
     PropertiesListingResponse
-  >({
-    url: getEndpointProps(PropertyApiRoutes.GET_PROPERTY_LISTINGS).path,
-    headers: {Authorization: `Bearer ${getToken()}`},
-  });
+  >(
+    {
+      url: getEndpointProps(PropertyApiRoutes.GET_PROPERTY_LISTINGS).path,
+      headers: {Authorization: `Bearer ${getToken()}`},
+    },
+    {initialData: initialListings}
+  );
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -147,20 +154,33 @@ ListingPage.getInitialProps = async (appContext: NextPageContext) => {
     const token: string | null = getCookieFromReq(appContext?.req);
 
     if (token) {
-      const {data}: {data: FavouritePropertyIdsResponse} = await api({
+      const {
+        data: favourites,
+      }: {data: FavouritePropertyIdsResponse} = await api({
         key: PropertyApiRoutes.FAVOURITE_PROPERTIES_IDS,
         isServer: true,
         token,
       });
 
-      return {props: {error: false, favourites: data}};
+      const {data: listings}: {data: PropertiesListingResponse} = await api({
+        key: PropertyApiRoutes.GET_PROPERTY_LISTINGS,
+        isServer: true,
+        token,
+      });
+
+      return {
+        error: false,
+        initialFavourites: favourites,
+        initialListings: listings,
+      };
     }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     console.log('SSR Error!');
   }
 
-  return {props: {error: true}};
+  return {error: true};
 };
 
 export default ListingPage;

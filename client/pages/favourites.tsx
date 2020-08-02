@@ -22,22 +22,22 @@ import {
 import api from '../api';
 
 interface AppStateProps {
-  favourites?: FavouritePropertyListingResponse;
+  initialFavourites?: FavouritePropertyListingResponse;
   error: boolean;
 }
 
-const FavouritesPage = ({favourites}: AppStateProps): JSX.Element => {
+const FavouritesPage = ({initialFavourites}: AppStateProps): JSX.Element => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
 
   // get property listings using swr
-  const {data: listings, error: listingsError, mutate} = useGetRequest<
+  const {data: favourites, error: favouritesError, mutate} = useGetRequest<
     FavouritePropertyListingResponse
   >(
     {
       url: getEndpointProps(PropertyApiRoutes.LIST_FAVOURITE_PROPERTIES).path,
       headers: {Authorization: `Bearer ${getToken()}`},
     },
-    {initialData: favourites}
+    {initialData: initialFavourites}
   );
 
   useEffect(() => {
@@ -50,11 +50,11 @@ const FavouritesPage = ({favourites}: AppStateProps): JSX.Element => {
     return <div>Not authenticated</div>;
   }
 
-  if (listingsError) {
+  if (favouritesError) {
     return <div>failed to load data</div>;
   }
 
-  if (!listings) {
+  if (!favourites) {
     return (
       <BodyWrapper>
         <Loader />
@@ -88,9 +88,9 @@ const FavouritesPage = ({favourites}: AppStateProps): JSX.Element => {
                       Saved listings
                     </h2>
 
-                    {listings.data.__properties__.length > 0 ? (
+                    {favourites.data.__properties__.length > 0 ? (
                       <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {listings.data.__properties__.map((item) => {
+                        {favourites.data.__properties__.map((item) => {
                           return (
                             <ListingCard
                               key={item.id}
@@ -140,14 +140,14 @@ FavouritesPage.getInitialProps = async (appContext: NextPageContext) => {
         token,
       });
 
-      return {props: {error: false, favourites: data}};
+      return {error: false, initialFavourites: data};
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     console.log('SSR Error!');
   }
 
-  return {props: {error: true}};
+  return {error: true};
 };
 
 export default FavouritesPage;
