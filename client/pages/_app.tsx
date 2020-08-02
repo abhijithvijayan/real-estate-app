@@ -76,11 +76,9 @@ CustomNextApp.getInitialProps = async (
 
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps: AppInitialProps = await App.getInitialProps(appContext);
+
   const cookies = parseCookies(appContext.ctx);
-
-  // Parse
   const token = cookies.token || null;
-
   const tokenPayload: DecodedTokenPayload | null = token
     ? decodeToken(token)
     : null;

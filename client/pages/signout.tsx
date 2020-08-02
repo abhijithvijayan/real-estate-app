@@ -5,11 +5,14 @@ import {useStoreActions} from '../state/store';
 
 const LogoutPage: FC = () => {
   const logout = useStoreActions((s) => s.auth.logout);
+  const reset = useStoreActions((s) => s.reset);
 
   useEffect(() => {
     logout();
-    Router.push('/signin');
-  }, [logout]);
+    reset();
+
+    Router.push('/');
+  }, [logout, reset]);
 
   return <div />;
 };

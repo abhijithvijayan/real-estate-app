@@ -2,27 +2,27 @@ import {parseCookies, setCookie, destroyCookie} from 'nookies';
 import decode from 'jwt-decode';
 
 enum Expiry {
-  COOKIE_EXPIRY = 30 * 24 * 60 * 60,
+  COOKIE_EXPIRY = 7 * 24 * 60 * 60,
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export function saveToken(
   jwt: string,
   expires = Expiry.COOKIE_EXPIRY as number
-) {
-  // return cookie.set('token', jwt, {expires, sameSite: 'Lax'});
+): unknown {
   return setCookie(null, 'token', jwt, {
     maxAge: expires,
     path: '/',
   });
 }
 
+// From client only (https://www.npmjs.com/package/nookies#client-only-cookies)
 export function getToken(): string {
   const cookies = parseCookies();
+
   return cookies.token;
 }
 
-export function removeToken(): {} {
+export function removeToken(): unknown {
   return destroyCookie(null, 'token');
 }
 

@@ -1,18 +1,22 @@
 import {
-  createStore,
   createTypedHooks,
-  Store,
   EasyPeasyConfig,
+  createStore,
+  action,
+  Action,
+  Store,
 } from 'easy-peasy';
 
 import {Auth, auth} from './auth';
 
 export type StoreModelProps = {
   auth: Auth;
+  reset: Action;
 };
 
 const model: StoreModelProps = {
   auth,
+  reset: action(() => {}),
 };
 
 // Provide our model to the helper
