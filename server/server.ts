@@ -11,7 +11,8 @@ import logger from './util/logger';
 import routes from './routes';
 import './passport';
 
-const {isDev} = env;
+const isDev = process.env.NODE_ENV !== 'production';
+
 const app = nextApp({dir: './client', dev: isDev});
 const handle = app.getRequestHandler();
 
