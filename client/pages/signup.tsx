@@ -7,9 +7,18 @@ import Link from 'next/link';
 import 'twin.macro';
 
 import BodyWrapper from '../components/BodyWrapper';
+
 import {useStoreState} from '../state/store';
 
 const LoginPage: React.FC = () => {
+  const {isAuthenticated} = useStoreState((s) => s.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      Router.push('/');
+    }
+  }, [isAuthenticated]);
+
   const [
     formState,
     {
@@ -25,14 +34,6 @@ const LoginPage: React.FC = () => {
   }>(null, {withIds: true});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
-
-  const {isAuthenticated} = useStoreState((s) => s.auth);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      Router.push('/');
-    }
-  }, [isAuthenticated]);
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>

@@ -6,7 +6,6 @@ import {getToken} from '../util/token';
 
 const axiosInstance: AxiosInstance = axios.create({
   // baseURL: '/api/v1', // this breaks SSR
-  headers: {},
 });
 
 export type ApiRequestProps = {

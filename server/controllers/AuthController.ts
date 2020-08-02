@@ -52,10 +52,14 @@ export const signToken = (
         }
 
         if (token === undefined) {
-          return res.status(500).send('Token signing failed');
+          return res
+            .status(500)
+            .json({message: 'Token signing failed', status: false});
         }
 
-        return res.status(200).send({token});
+        return res
+          .status(200)
+          .json({token, message: 'Login successful', status: true});
       }
     );
 
@@ -63,7 +67,7 @@ export const signToken = (
   }
 
   // eslint-disable-next-line consistent-return
-  return res.status(500).send('Token signing failed');
+  return res.status(500).json({message: 'Token signing failed', status: false});
 };
 
 export const hasRequiredRoles = (requiredRoles: string[], error: string) => {

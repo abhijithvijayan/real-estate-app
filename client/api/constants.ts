@@ -1,10 +1,20 @@
+export enum AuthApiRoutes {
+  LOGIN = 'login',
+}
+
 export enum ProductApiRoutes {
   GET_PRODUCT_LISTINGS = 'getProductListings',
 }
 
-export type Routes = ProductApiRoutes;
+export type Routes = ProductApiRoutes | AuthApiRoutes;
 
 const endpoints: Endpoints = {
+  login: {
+    path: '/api/v1/auth/signin',
+    method: 'POST',
+    noAuth: true,
+  },
+
   getProductListings: {
     path: '/',
     method: 'GET',

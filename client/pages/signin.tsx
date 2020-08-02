@@ -7,9 +7,18 @@ import Link from 'next/link';
 import 'twin.macro';
 
 import BodyWrapper from '../components/BodyWrapper';
-import {useStoreState} from '../state/store';
+
+import {useStoreActions, useStoreState} from '../state/store';
 
 const LoginPage: React.FC = () => {
+  const {isAuthenticated} = useStoreState((s) => s.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      Router.push('/');
+    }
+  }, [isAuthenticated]);
+
   const [
     formState,
     {email: emailProps, password: passwordProps},
@@ -20,13 +29,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const {isAuthenticated} = useStoreState((s) => s.auth);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      Router.push('/');
-    }
-  }, [isAuthenticated]);
+  const {login} = useStoreActions((s) => s.auth);
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
@@ -54,9 +57,12 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log('submitted', formState.values);
+      await login({
+        email: formState.values.email.trim(),
+        password: formState.values.password.trim(),
+      });
 
-      // return;
+      return;
     } catch (err) {
       // backend response
       if (err?.response?.data?.response) {

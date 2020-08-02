@@ -7,12 +7,28 @@ import {
   DecodedTokenPayload,
 } from '../util/token';
 
+import api from '../api';
+import {AuthApiRoutes} from '../api/constants';
+
+type AuthUserProps = {
+  email: string;
+  password: string;
+};
+
+type AuthSuccessResponse = {
+  data: {
+    status: true;
+    token: string;
+    message: string;
+  };
+};
+
 export interface Auth {
   email: string | null;
   isAuthenticated: Computed<Auth, boolean>;
   set: Action<Auth, DecodedTokenPayload>;
   logout: Action<Auth>;
-  login: Thunk<Auth, {email: string; password: string}>;
+  login: Thunk<Auth, AuthUserProps>;
 }
 
 export const auth: Auth = {
@@ -28,23 +44,26 @@ export const auth: Auth = {
     state.email = null;
   }),
 
-  login: thunk(async (actions, _payload) => {
-    // API call
+  login: thunk(
+    async (actions, payload): Promise<void> => {
+      // API call
+      const {data: response}: AuthSuccessResponse = await api({
+        key: AuthApiRoutes.LOGIN,
+        params: payload,
+      });
 
-    const token = '';
-    const success = true;
+      const {status, token, message} = response;
 
-    if (success) {
-      // Save jwt to cookie
-      saveToken(token);
-      // decode token and authenticate
-      const decoded: DecodedTokenPayload | null = decodeToken(token);
+      if (status) {
+        // Save jwt to cookie
+        saveToken(token);
+        // decode token and authenticate
+        const decoded: DecodedTokenPayload | null = decodeToken(token);
 
-      if (decoded) {
-        actions.set(decoded);
+        if (decoded) {
+          actions.set(decoded);
+        }
       }
     }
-
-    return {};
-  }),
+  ),
 };
