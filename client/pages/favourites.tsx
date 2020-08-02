@@ -88,18 +88,34 @@ const FavouritesPage = ({favourites}: AppStateProps): JSX.Element => {
                       Saved listings
                     </h2>
 
-                    <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                      {listings.data.__properties__.map((item) => {
-                        return (
-                          <ListingCard
-                            key={item.id}
-                            item={item}
-                            favourite={true}
-                            mutate={mutate}
-                          />
-                        );
-                      })}
-                    </div>
+                    {listings.data.__properties__.length > 0 ? (
+                      <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {listings.data.__properties__.map((item) => {
+                          return (
+                            <ListingCard
+                              key={item.id}
+                              item={item}
+                              favourite={true}
+                              mutate={mutate}
+                            />
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div>
+                        <img
+                          src="/no-data.png"
+                          alt="empty"
+                          css={[
+                            tw`lg:w-8/12 flex items-center justify-center mx-auto`,
+
+                            css`
+                              max-width: 80%;
+                            `,
+                          ]}
+                        />
+                      </div>
+                    )}
                   </div>
                 </section>
               </main>

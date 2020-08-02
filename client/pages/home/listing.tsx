@@ -97,22 +97,38 @@ const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
                       Listings
                     </h2>
 
-                    <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                      {listings.data.map((item) => {
-                        const isInFavourites: boolean = (
-                          userFavourites?.data || []
-                        ).includes(item.id);
+                    {listings.data.length > 0 ? (
+                      <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {listings.data.map((item) => {
+                          const isInFavourites: boolean = (
+                            userFavourites?.data || []
+                          ).includes(item.id);
 
-                        return (
-                          <ListingCard
-                            key={item.id}
-                            item={item}
-                            favourite={isInFavourites}
-                            mutate={mutate}
-                          />
-                        );
-                      })}
-                    </div>
+                          return (
+                            <ListingCard
+                              key={item.id}
+                              item={item}
+                              favourite={isInFavourites}
+                              mutate={mutate}
+                            />
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div>
+                        <img
+                          src="/no-data.png"
+                          alt="empty"
+                          css={[
+                            tw`lg:w-8/12 flex items-center justify-center mx-auto`,
+
+                            css`
+                              max-width: 80%;
+                            `,
+                          ]}
+                        />
+                      </div>
+                    )}
                   </div>
                 </section>
               </main>
