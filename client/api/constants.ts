@@ -1,4 +1,4 @@
-export type ProductListing = {
+export type PropertyListing = {
   id: string;
   squareMeter: string;
   shortDescription: string;
@@ -59,7 +59,7 @@ export type ProductListing = {
 
 export type ProductsListingResponse = {
   status: true;
-  data: ProductListing[];
+  data: PropertyListing[];
   message: string;
 };
 
@@ -69,11 +69,13 @@ export enum AuthApiRoutes {
   LOGIN = 'login',
 }
 
-export enum ProductApiRoutes {
-  GET_PRODUCT_LISTINGS = 'getProductListings',
+export enum PropertyApiRoutes {
+  GET_PROPERTY_LISTINGS = 'getPropertyListings',
+  PROPERTY_FAVOURITE_ACTION = 'propertyFavouriteAction',
+  LIST_FAVOURITE_PROPERTIES = 'listFavouriteProperties',
 }
 
-export type Routes = ProductApiRoutes | AuthApiRoutes;
+export type Routes = PropertyApiRoutes | AuthApiRoutes;
 
 const endpoints: Endpoints = {
   login: {
@@ -82,8 +84,18 @@ const endpoints: Endpoints = {
     noAuth: true,
   },
 
-  getProductListings: {
+  getPropertyListings: {
     path: '/api/v1/property/listing',
+    method: 'GET',
+  },
+
+  propertyFavouriteAction: {
+    path: '/api/v1/property/listing/favourites',
+    method: 'POST',
+  },
+
+  listFavouriteProperties: {
+    path: '/api/v1/property/listing/favourites',
     method: 'GET',
   },
 };

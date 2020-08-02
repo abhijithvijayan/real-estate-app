@@ -1,22 +1,36 @@
-import 'twin.macro';
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import {useFormState} from 'react-use-form-state';
+import tw, {css} from 'twin.macro';
 import React from 'react';
 
 import Icon from './Icon';
 
-import {ProductListing} from '../api/constants';
+import {PropertyListing} from '../api/constants';
 
-const ListingCard: React.FC<{item: ProductListing}> = ({item}) => {
+type Props = {
+  handleSubmit(id: string, checked: boolean): Promise<void>;
+  item: PropertyListing;
+};
+
+const ListingCard: React.FC<Props> = ({item, handleSubmit}) => {
+  const [
+    formState,
+    {checkbox: checkboxProps, label: labelProps},
+  ] = useFormState<{
+    action: boolean;
+  }>({action: false}, {withIds: true});
+
   return (
     <>
       <div tw="max-w-xs mx-auto bg-white shadow rounded-lg overflow-hidden">
         <img
-          tw="h-48 w-full object-cover"
+          tw="h-48 w-full object-cover select-none"
           src={item.photos[0]?.url || ''}
           alt="cover"
         />
 
         <div tw="px-4 py-2">
-          <h1 tw="text-gray-900 font-bold text-sm uppercase mb-0">
+          <h1 tw="text-gray-900 font-bold text-sm uppercase mb-0 select-none">
             {item.shortDescription}
           </h1>
         </div>
@@ -38,10 +52,38 @@ const ListingCard: React.FC<{item: ProductListing}> = ({item}) => {
         </div>
 
         <div tw="flex items-center justify-end px-4 pt-2 pb-4">
-          <Icon
-            name="heart"
-            tw="cursor-pointer mr-3 text-gray-600 hover:text-gray-800"
-          />
+          <div
+            tw="inline-flex"
+            onClick={(): void => {
+              handleSubmit(item.id, formState.values.action);
+            }}
+          >
+            <label
+              {...labelProps('action')}
+              tw="block font-bold text-gray-500 cursor-pointer "
+            >
+              <input
+                {...checkboxProps('action')}
+                tw="mr-2 leading-tight hidden"
+              />
+              <Icon
+                name="heart"
+                css={[
+                  tw`hover:text-gray-800 mr-3 text-gray-600 cursor-pointer`,
+
+                  // liked &&
+                  //   formState.values.action &&
+                  //   selectedId &&
+                  //   selectedId === item.id &&
+                  css`
+                    svg {
+                      fill: rgba(45, 55, 72, var(--text-opacity));
+                    }
+                  `,
+                ]}
+              />
+            </label>
+          </div>
           <Icon
             name="external-link"
             tw="cursor-pointer text-gray-600 hover:text-gray-800"

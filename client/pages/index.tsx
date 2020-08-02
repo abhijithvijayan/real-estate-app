@@ -9,7 +9,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 
 import {
-  ProductApiRoutes,
+  PropertyApiRoutes,
   getEndpointProps,
   ProductsListingResponse,
 } from '../api/constants';
@@ -23,7 +23,7 @@ const IndexPage: React.FC = () => {
 
   // swr
   const {data, error} = useGetRequest<ProductsListingResponse>({
-    url: getEndpointProps(ProductApiRoutes.GET_PRODUCT_LISTINGS).path,
+    url: getEndpointProps(PropertyApiRoutes.GET_PROPERTY_LISTINGS).path,
     headers: {Authorization: `Bearer ${getToken()}`},
   });
 
