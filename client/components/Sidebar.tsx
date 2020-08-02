@@ -6,6 +6,7 @@ import React from 'react';
 import Icon from './Icon';
 
 import {useSidebarContext} from '../contexts/sidebar-context';
+import {AppRoutes} from '../api/constants';
 
 const Sidebar: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useSidebarContext();
@@ -39,7 +40,7 @@ const Sidebar: React.FC = () => {
         </div>
 
         <nav tw="mt-10">
-          <Link href="/">
+          <Link href={AppRoutes.ROOT}>
             <a tw="flex items-center px-6 py-2 mt-4 text-purple-500 cursor-pointer">
               <Icon name="inbox" />
 
@@ -47,7 +48,7 @@ const Sidebar: React.FC = () => {
             </a>
           </Link>
 
-          <Link href="/settings">
+          <Link href={AppRoutes.SETTINGS}>
             <a tw="hover:bg-opacity-25 hover:text-gray-900 flex items-center px-6 py-2 mt-4 text-gray-700 cursor-pointer">
               <Icon name="settings" />
 

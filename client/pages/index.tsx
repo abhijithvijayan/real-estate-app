@@ -5,15 +5,16 @@ import BodyWrapper from '../components/BodyWrapper';
 import Loader from '../components/Loader';
 
 import {useStoreState} from '../state/store';
+import {AppRoutes} from '../api/constants';
 
 const IndexPage: React.FC = () => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
 
   useEffect(() => {
     if (isAuthenticated) {
-      Router.push('/home/listing');
+      Router.push(AppRoutes.PROPERTIES_LISTING);
     } else {
-      Router.push('/signin');
+      Router.push(AppRoutes.SIGN_IN);
     }
   }, [isAuthenticated]);
 

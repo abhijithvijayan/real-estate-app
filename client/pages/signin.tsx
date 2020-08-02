@@ -9,13 +9,14 @@ import 'twin.macro';
 import BodyWrapper from '../components/BodyWrapper';
 
 import {useStoreActions, useStoreState} from '../state/store';
+import {AppRoutes} from '../api/constants';
 
 const LoginPage: React.FC = () => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
 
   useEffect(() => {
     if (isAuthenticated) {
-      Router.push('/home/listing');
+      Router.push(AppRoutes.PROPERTIES_LISTING);
     }
   }, [isAuthenticated]);
 
@@ -138,7 +139,7 @@ const LoginPage: React.FC = () => {
               <div tw="flex items-center justify-center py-4 text-center bg-gray-100">
                 <span tw="text-sm text-gray-600">Do not have an account? </span>
 
-                <Link href="/signup">
+                <Link href={AppRoutes.SIGN_UP}>
                   <a tw="cursor-pointer hover:text-blue-500 mx-2 text-sm font-bold text-blue-600">
                     Sign Up
                   </a>

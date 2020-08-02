@@ -6,6 +6,7 @@ import 'twin.macro';
 import Icon from './Icon';
 
 import {useSidebarContext} from '../contexts/sidebar-context';
+import {AppRoutes} from '../api/constants';
 
 const Header: React.FC = () => {
   const setIsSidebarOpen = useSidebarContext()[1];
@@ -65,13 +66,13 @@ const Header: React.FC = () => {
                 />
 
                 <div tw="absolute right-0 z-20 w-48 py-2 mt-2 bg-white rounded-md shadow-xl">
-                  <Link href="/profile">
+                  <Link href={AppRoutes.PROFILE}>
                     <a tw="hover:bg-indigo-600 hover:text-white block px-4 py-2 text-sm text-gray-700 cursor-pointer">
                       Profile
                     </a>
                   </Link>
 
-                  <Link href="/signout">
+                  <Link href={AppRoutes.SIGN_OUT}>
                     <a tw="hover:bg-indigo-600 hover:text-white block px-4 py-2 text-sm text-gray-700 cursor-pointer">
                       Logout
                     </a>

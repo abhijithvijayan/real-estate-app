@@ -1,3 +1,13 @@
+export enum AppRoutes {
+  SIGN_IN = '/signin',
+  SIGN_UP = '/signup',
+  SIGN_OUT = '/signout',
+  ROOT = '/',
+  PROPERTIES_LISTING = '/home/listing',
+  PROFILE = '/profile',
+  SETTINGS = '/settings',
+}
+
 export type FavouritePropertyListing = {
   id: string;
   squareMeter: string;

@@ -18,6 +18,7 @@ import {
   ProductsListingResponse,
   PropertyApiRoutes,
   getEndpointProps,
+  AppRoutes,
 } from '../../api/constants';
 import api from '../../api';
 
@@ -48,7 +49,7 @@ const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      Router.push('/signin');
+      Router.push(AppRoutes.SIGN_IN);
     }
   }, [isAuthenticated]);
 
