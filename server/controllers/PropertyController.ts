@@ -25,7 +25,9 @@ class PropertyController {
 
     const {
       photos,
-      squareMeter,
+      squareFeet,
+      title,
+      price,
       shortDescription,
       longDescription,
       noOfRooms,
@@ -42,7 +44,9 @@ class PropertyController {
       },
     }: {
       photos: string[];
-      squareMeter: number;
+      squareFeet: number;
+      price: number;
+      title: string;
       shortDescription: string;
       longDescription: string;
       noOfRooms: number;
@@ -60,7 +64,9 @@ class PropertyController {
     } = req.body;
 
     const property = new Property();
-    property.squareMeter = squareMeter;
+    property.title = title;
+    property.price = price;
+    property.squareFeet = squareFeet;
     property.shortDescription = shortDescription;
     property.longDescription = longDescription;
     property.noOfRooms = noOfRooms;

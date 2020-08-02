@@ -29,12 +29,18 @@ export class Property {
   id: string;
 
   @Column({type: 'decimal'})
-  squareMeter: number;
+  squareFeet: number;
+
+  @Column({nullable: false})
+  title: string;
+
+  @Column({type: 'decimal'})
+  price: number;
 
   @Column({length: 180})
   shortDescription: string;
 
-  @Column({length: 400})
+  @Column({length: 500})
   longDescription: string;
 
   @Column({type: 'integer'})

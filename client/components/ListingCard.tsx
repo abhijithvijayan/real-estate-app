@@ -74,23 +74,25 @@ const ListingCard: React.FC<Props> = ({item, favourite, mutate}) => {
 
         <div tw="px-4 py-2">
           <h1 tw="text-gray-900 font-bold text-sm uppercase mb-0 select-none">
-            {item.shortDescription}
+            {item.title}
           </h1>
         </div>
 
         <div tw="px-4">
-          <h1 tw="text-orange-300 font-semibold text-lg">$129</h1>
+          <h1 tw="text-orange-300 font-semibold text-lg">
+            &#8377; {item.price}
+          </h1>
         </div>
 
         <div tw="px-4">
-          <p tw="text-gray-600 text-xs">{item.longDescription}</p>
+          <p tw="text-gray-600 text-xs">{item.shortDescription}</p>
         </div>
 
         <div tw="flex items-center px-4">
           <p tw="text-gray-600 text-xs mr-2">{item.noOfRooms} Rooms</p>
           <p tw="text-gray-600 text-xs mr-2">{item.noOfBedRooms} BHK</p>
           <p tw="text-gray-600 text-xs">
-            {item.squareMeter} ft<sup>2</sup>
+            {item.squareFeet} ft<sup>2</sup>
           </p>
         </div>
 

@@ -28,7 +28,9 @@ export type FavouritePropertyListingResponse = {
 
 export type PropertyListing = {
   id: string;
-  squareMeter: string;
+  title: string;
+  price: string;
+  squareFeet: string;
   shortDescription: string;
   longDescription: string;
   noOfRooms: number;
