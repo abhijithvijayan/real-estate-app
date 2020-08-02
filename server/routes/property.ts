@@ -26,7 +26,7 @@ router.get(
 );
 
 router.get(
-  '/listing/favourites',
+  '/listing/favourites/all',
   asyncHandler(AuthController.jwtAuth),
   asyncHandler(PropertyController.getFavourites)
 );

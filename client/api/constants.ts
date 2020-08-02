@@ -113,7 +113,7 @@ const endpoints: Endpoints = {
   },
 
   listFavouriteProperties: {
-    path: '/api/v1/property/listing/favourites',
+    path: '/api/v1/property/listing/favourites/all',
     method: 'GET',
   },
 };
