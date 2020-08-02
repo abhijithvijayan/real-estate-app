@@ -208,23 +208,31 @@ class PropertyController {
     }
 
     const userRepository = getRepository(User);
+    const userListingRepository = getRepository(UserListing);
 
     try {
-      const user = await userRepository.findOne({
+      const user = await userRepository.findOneOrFail({
         relations: ['userListing'],
         where: {id: currentUser.id},
       });
 
-      if (user?.userListing) {
-        // to load objects inside lazy relations:
-        const properties: Property[] = await user.userListing.properties;
-
-        return res.status(200).json({
-          data: properties,
-          status: true,
-          message: 'Fetching successful',
-        });
+      if (!user?.userListing) {
+        // save new listing
+        const userListing = new UserListing();
+        await userListingRepository.save(userListing);
+        // attach this listing to user
+        user.userListing = userListing;
+        await userRepository.save(user);
       }
+
+      // to load objects inside lazy relations:
+      const properties: Property[] = await user.userListing.properties;
+
+      return res.status(200).json({
+        data: properties,
+        status: true,
+        message: 'Fetching successful',
+      });
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
@@ -344,18 +352,18 @@ class PropertyController {
         where: {id: currentUser.id},
       });
 
+      let idCollection: string[] = [];
       if (user?.userFavourite) {
         // to load objects inside lazy relations:
         const properties: Property[] = await user.userFavourite.properties;
-        const idCollection: string[] = await properties.map((item) => item.id);
-
-        return res.status(200).json({
-          data: idCollection,
-          status: true,
-          message: 'Fetching successful',
-        });
+        idCollection = await properties.map((item) => item.id);
       }
 
+      return res.status(200).json({
+        data: idCollection,
+        status: true,
+        message: 'Fetching successful',
+      });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       //
@@ -381,33 +389,40 @@ class PropertyController {
     const userFavouriteRepository = getRepository(UserFavourite);
 
     try {
-      const user = await userRepository.findOne({
+      const user = await userRepository.findOneOrFail({
         relations: ['userFavourite'],
         where: {id: currentUser.id},
       });
 
-      if (user?.userFavourite) {
-        const properties = await userFavouriteRepository
-          .createQueryBuilder('userFavourite')
-          .leftJoinAndSelect('userFavourite.properties', 'property')
-          .leftJoinAndSelect('property.photos', 'photos')
-          .leftJoinAndSelect('property.address', 'address')
-          .leftJoinAndSelect('address.zipCode', 'zipCode')
-          .leftJoinAndSelect('zipCode.city', 'city')
-          .leftJoinAndSelect('zipCode.state', 'state')
-          .leftJoinAndSelect('zipCode.country', 'country')
-          .leftJoinAndSelect('property.listing', 'seller') // this is being lazy loaded
-          .leftJoinAndSelect('seller.user', 'owner') // so output doesn't reflect owner field
-          .where('userFavourite.id = :id', {id: user.userFavourite.id})
-          .getOne();
+      if (!user?.userFavourite) {
+        // save new favourites list
+        const userFavourite = new UserFavourite();
+        await userFavouriteRepository.save(userFavourite);
 
-        return res.status(200).json({
-          data: properties,
-          status: true,
-          message: 'Fetching successful',
-        });
+        // attach this Favourite List to user
+        user.userFavourite = userFavourite;
+        await userRepository.save(user);
       }
 
+      const properties = await userFavouriteRepository
+        .createQueryBuilder('userFavourite')
+        .leftJoinAndSelect('userFavourite.properties', 'property')
+        .leftJoinAndSelect('property.photos', 'photos')
+        .leftJoinAndSelect('property.address', 'address')
+        .leftJoinAndSelect('address.zipCode', 'zipCode')
+        .leftJoinAndSelect('zipCode.city', 'city')
+        .leftJoinAndSelect('zipCode.state', 'state')
+        .leftJoinAndSelect('zipCode.country', 'country')
+        .leftJoinAndSelect('property.listing', 'seller') // this is being lazy loaded
+        .leftJoinAndSelect('seller.user', 'owner') // so output doesn't reflect owner field
+        .where('userFavourite.id = :id', {id: user.userFavourite.id})
+        .getOne();
+
+      return res.status(200).json({
+        data: properties,
+        status: true,
+        message: 'Fetching successful',
+      });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       //
