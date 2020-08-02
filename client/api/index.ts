@@ -12,7 +12,7 @@ export type ApiRequestProps = {
   key: Routes;
   route?: (string | number)[];
   isServer?: boolean;
-  token?: string;
+  token?: string | null;
   params?: {
     [key: string]: any;
   };

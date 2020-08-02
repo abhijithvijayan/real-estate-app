@@ -52,7 +52,7 @@ export const auth: Auth = {
         params: payload,
       });
 
-      const {status, token, message} = response;
+      const {status, token} = response;
 
       if (status) {
         // Save jwt to cookie
