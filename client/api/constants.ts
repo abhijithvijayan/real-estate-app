@@ -27,7 +27,7 @@ export type PropertyListing = {
   createdAt: string;
   updatedAt: string;
   photos: {
-    id: number; // Todo
+    id: string;
     url: string;
   }[];
   address: {

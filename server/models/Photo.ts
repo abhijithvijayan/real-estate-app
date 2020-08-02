@@ -6,7 +6,7 @@ import {Property} from './Property';
 
 @Entity()
 export class Photo {
-  @PrimaryGeneratedColumn() // Todo: uuid
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column()
