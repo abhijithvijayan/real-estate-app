@@ -4,9 +4,10 @@
  *  @author abhijithvijayan <https://abhijithvijayan.in>
  */
 
-import App, {AppProps, AppInitialProps} from 'next/app';
+import App, {AppProps, AppInitialProps, AppContext} from 'next/app';
 import {ThemeProvider} from 'styled-components';
 import {StoreProvider} from 'easy-peasy';
+import {parseCookies} from 'nookies';
 import {useEffect} from 'react';
 import Head from 'next/head';
 import 'emoji-log';
@@ -34,12 +35,12 @@ function CustomNextApp({
   pageProps,
   initialState,
 }: AppStateProps): JSX.Element {
+  const store = initializeStore(initialState);
+
   useEffect(() => {
     // eslint-disable-next-line no-console
     console.emoji('🦄', '_app rendered');
   }, []);
-
-  const store = initializeStore(initialState);
 
   return (
     <>
@@ -51,8 +52,6 @@ function CustomNextApp({
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
         />
-
-        <link rel="manifest" href="/manifest.json" />
       </Head>
 
       <StoreProvider store={store}>
@@ -67,7 +66,7 @@ function CustomNextApp({
 
 // Every page is server-side rendered.
 CustomNextApp.getInitialProps = async (
-  appContext
+  appContext: AppContext
 ): Promise<{
   initialState: any;
   pageProps: any;
@@ -77,9 +76,10 @@ CustomNextApp.getInitialProps = async (
 
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps: AppInitialProps = await App.getInitialProps(appContext);
+  const cookies = parseCookies(appContext.ctx);
 
-  // Todo: `AppContext` is not assigned as TS is causing issues when accessing `cookies` object
-  const token: string | null = appContext.ctx?.req?.cookies?.token || null;
+  // Parse
+  const token = cookies.token || null;
 
   const tokenPayload: DecodedTokenPayload | null = token
     ? decodeToken(token)
