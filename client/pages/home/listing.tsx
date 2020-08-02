@@ -15,7 +15,7 @@ import useGetRequest from '../../api/useGetRequest';
 import {useStoreState} from '../../state/store';
 import {
   FavouritePropertyIdsResponse,
-  ProductsListingResponse,
+  PropertiesListingResponse,
   PropertyApiRoutes,
   getEndpointProps,
   AppRoutes,
@@ -41,7 +41,7 @@ const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
 
   // get property listings using swr
   const {data: listings, error: listingsError} = useGetRequest<
-    ProductsListingResponse
+    PropertiesListingResponse
   >({
     url: getEndpointProps(PropertyApiRoutes.GET_PROPERTY_LISTINGS).path,
     headers: {Authorization: `Bearer ${getToken()}`},

@@ -24,6 +24,10 @@ const DashboardPage: React.FC<Props> = ({listings, favourites}) => {
             `,
           ]}
         >
+          <h2 tw="text-gray-800 font-medium capitalize text-xl md:text-2xl pb-3">
+            Listings
+          </h2>
+
           <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
             {listings.map((item) => {
               const isInFavourites: boolean = favourites.includes(item.id);

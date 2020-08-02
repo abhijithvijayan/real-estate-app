@@ -85,7 +85,7 @@ export type PropertyListing = {
   };
 };
 
-export type ProductsListingResponse = {
+export type PropertiesListingResponse = {
   status: true;
   data: PropertyListing[];
   message: string;
