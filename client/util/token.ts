@@ -1,4 +1,4 @@
-import {parseCookies, setCookie, destroyCookie} from 'nookies';
+import {parseCookies, setCookie} from 'nookies';
 import {IncomingMessage} from 'http';
 import decode from 'jwt-decode';
 
@@ -38,10 +38,6 @@ export function getCookieFromReq(req?: IncomingMessage): string | null {
   }
 
   return null;
-}
-
-export function removeToken(): unknown {
-  return destroyCookie(null, 'token');
 }
 
 type TokenPayload = {

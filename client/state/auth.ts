@@ -1,14 +1,8 @@
 import {action, Action, thunk, Thunk, computed, Computed} from 'easy-peasy';
 
-import {
-  decodeToken,
-  saveToken,
-  removeToken,
-  DecodedTokenPayload,
-} from '../util/token';
-
-import api from '../api';
+import {decodeToken, saveToken, DecodedTokenPayload} from '../util/token';
 import {AuthApiRoutes} from '../api/constants';
+import api from '../api';
 
 type AuthUserProps = {
   email: string;
@@ -40,7 +34,6 @@ export const auth: Auth = {
   }),
 
   logout: action((state) => {
-    removeToken();
     state.email = null;
   }),
 

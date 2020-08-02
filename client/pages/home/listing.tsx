@@ -1,5 +1,5 @@
-import {NextPageContext} from 'next';
 import React, {useEffect} from 'react';
+import {NextPageContext} from 'next';
 import Router from 'next/router';
 import 'twin.macro';
 
