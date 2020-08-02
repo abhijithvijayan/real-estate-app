@@ -10,7 +10,7 @@ export default function useRequest(
   {key, route = [], params = {}}: ApiRequestProps,
   {initialData, ...config}: ConfigInterface = {}
 ) {
-  const {data: response, error, isValidating, mutate} = useSWR(
+  const {data: response, error, isValidating, revalidate, mutate} = useSWR(
     (): any => {
       return api({key, route, params});
     },
@@ -30,6 +30,7 @@ export default function useRequest(
     response,
     error,
     isValidating,
+    revalidate,
     mutate,
   };
 }

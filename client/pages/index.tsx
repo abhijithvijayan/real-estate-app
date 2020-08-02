@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import Router from 'next/router';
+
 import 'twin.macro';
 
 import BodyWrapper from '../components/BodyWrapper';
@@ -7,11 +8,24 @@ import DashboardPage from '../components/Dashboard';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 
+import {
+  ProductApiRoutes,
+  getEndpointProps,
+  ProductsListingResponse,
+} from '../api/constants';
 import {SidebarContextProvider} from '../contexts/sidebar-context';
 import {useStoreState} from '../state/store';
+import useGetRequest from '../api/useGetRequest';
+import {getToken} from '../util/token';
 
 const IndexPage: React.FC = () => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
+
+  // swr
+  const {data, error} = useGetRequest<ProductsListingResponse>({
+    url: getEndpointProps(ProductApiRoutes.GET_PRODUCT_LISTINGS).path,
+    headers: {Authorization: `Bearer ${getToken()}`},
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -21,6 +35,14 @@ const IndexPage: React.FC = () => {
 
   if (!isAuthenticated) {
     return null;
+  }
+
+  if (error) {
+    return <div>failed to load</div>;
+  }
+
+  if (!data) {
+    return <div>loading...</div>;
   }
 
   return (
@@ -34,7 +56,7 @@ const IndexPage: React.FC = () => {
               <Header />
 
               <main tw="flex flex-col flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
-                <DashboardPage />
+                <DashboardPage listings={data.data} />
               </main>
             </div>
           </div>

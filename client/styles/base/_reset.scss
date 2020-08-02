@@ -8,3 +8,9 @@ html {
 body {
   min-height: 100%;
 }
+
+
+img:not([width]),
+img:not([height]) {
+  filter: none;
+}

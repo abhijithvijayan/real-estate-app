@@ -1,15 +1,19 @@
 /* eslint-disable react/jsx-props-no-spreading, @typescript-eslint/no-explicit-any */
 import React from 'react';
 
+import ExternalLink from './ExternalLink';
 import SettingsIcon from './Settings';
 import SearchIcon from './Search';
 import BurgerIcon from './Burger';
 import InboxIcon from './Inbox';
+import HeartIcon from './Heart';
 import BellIcon from './Bell';
 
 const icons = {
   bell: BellIcon,
   burger: BurgerIcon,
+  'external-link': ExternalLink,
+  heart: HeartIcon,
   inbox: InboxIcon,
   search: SearchIcon,
   settings: SettingsIcon,

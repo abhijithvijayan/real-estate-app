@@ -1,19 +1,17 @@
 import tw, {css} from 'twin.macro';
 import React from 'react';
 
-const DashboardPage: React.FC = () => {
-  // const handleClick = (): SocketIOClient.Socket => {
-  //   return socket.emit('some-event', {
-  //     msg: 'Hello broker',
-  //   });
-  // };
+import ListingCard from './ListingCard';
 
+import {ProductListing} from '../api/constants';
+
+const DashboardPage: React.FC<{listings: ProductListing[]}> = ({listings}) => {
   return (
     <>
       <section tw="flex flex-1 flex-col sm:flex-row">
         <div
           css={[
-            tw`flex-shrink bg-white`,
+            tw`flex-shrink p-6 bg-white`,
 
             css`
               flex-grow: 2;
@@ -21,10 +19,12 @@ const DashboardPage: React.FC = () => {
             `,
           ]}
         >
-          hello
+          <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            {listings.map((item) => {
+              return <ListingCard key={item.id} item={item} />;
+            })}
+          </div>
         </div>
-
-        <div tw="flex-1">world</div>
       </section>
     </>
   );
