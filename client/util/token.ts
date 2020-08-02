@@ -11,7 +11,7 @@ export function saveToken(
   expires = Expiry.COOKIE_EXPIRY as number
 ) {
   // return cookie.set('token', jwt, {expires, sameSite: 'Lax'});
-  return setCookie(null, 'fromClient', jwt, {
+  return setCookie(null, 'token', jwt, {
     maxAge: expires,
     path: '/',
   });
