@@ -184,7 +184,7 @@ class PropertyController {
 
         return res
           .status(201)
-          .send({message: 'Listing of property successful.', status: true});
+          .json({message: 'Listing of property successful.', status: true});
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -194,7 +194,7 @@ class PropertyController {
 
     return res
       .status(500)
-      .send({message: 'Listing creation of property failed', status: false});
+      .json({message: 'Listing creation of property failed', status: false});
   };
 
   static getUserListings = async (
@@ -233,7 +233,7 @@ class PropertyController {
 
     return res
       .status(500)
-      .send({message: "Error fetching user's listings", status: false});
+      .json({message: "Error fetching user's listings", status: false});
   };
 
   static addOrRemoveFromFavourites = async (
@@ -286,7 +286,7 @@ class PropertyController {
           if (action === 0) {
             return res
               .status(500)
-              .send({message: 'List is already empty', status: false});
+              .json({message: 'List is already empty', status: false});
           }
         }
 
@@ -323,7 +323,7 @@ class PropertyController {
 
     return res
       .status(500)
-      .send({message: 'Error performing action', status: false});
+      .json({message: 'Error performing action', status: false});
   };
 
   static getFavourites = async (
@@ -337,6 +337,7 @@ class PropertyController {
     }
 
     const userRepository = getRepository(User);
+    const userFavouriteRepository = getRepository(UserFavourite);
 
     try {
       const user = await userRepository.findOne({
@@ -345,9 +346,19 @@ class PropertyController {
       });
 
       if (user?.userFavourite) {
-        // to load objects inside lazy relations:
-        const properties: Property[] = await user.userFavourite.properties;
-        // Todo: attach images once it is set
+        const properties = await userFavouriteRepository
+          .createQueryBuilder('userFavourite')
+          .leftJoinAndSelect('userFavourite.properties', 'property')
+          .leftJoinAndSelect('property.photos', 'photos')
+          .leftJoinAndSelect('property.address', 'address')
+          .leftJoinAndSelect('address.zipCode', 'zipCode')
+          .leftJoinAndSelect('zipCode.city', 'city')
+          .leftJoinAndSelect('zipCode.state', 'state')
+          .leftJoinAndSelect('zipCode.country', 'country')
+          .leftJoinAndSelect('property.listing', 'seller') // this is being lazy loaded
+          .leftJoinAndSelect('seller.user', 'owner') // so output doesn't reflect owner field
+          .where('userFavourite.id = :id', {id: user.userFavourite.id})
+          .getMany();
 
         return res.status(200).json({
           data: properties,
@@ -363,7 +374,7 @@ class PropertyController {
 
     return res
       .status(500)
-      .send({message: "Error fetching user's favourites", status: false});
+      .json({message: "Error fetching user's favourites", status: false});
   };
 
   static getAllPropertyListings = async (
@@ -398,7 +409,7 @@ class PropertyController {
     }
     return res
       .status(500)
-      .send({message: 'Error fetching properties', status: false});
+      .json({message: 'Error fetching properties', status: false});
   };
 }
 
