@@ -30,7 +30,7 @@ const FavouritesPage = ({favourites}: AppStateProps): JSX.Element => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
 
   // get property listings using swr
-  const {data: listings, error: listingsError} = useGetRequest<
+  const {data: listings, error: listingsError, mutate} = useGetRequest<
     FavouritePropertyListingResponse
   >(
     {
@@ -95,6 +95,7 @@ const FavouritesPage = ({favourites}: AppStateProps): JSX.Element => {
                             key={item.id}
                             item={item}
                             favourite={true}
+                            mutate={mutate}
                           />
                         );
                       })}

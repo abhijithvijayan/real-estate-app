@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react';
 import {NextPageContext} from 'next';
 import Router from 'next/router';
-import 'twin.macro';
+import tw, {css} from 'twin.macro';
 
 import BodyWrapper from '../../components/BodyWrapper';
-import DashboardPage from '../../components/Dashboard';
+import ListingCard from '../../components/ListingCard';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Loader from '../../components/Loader';
@@ -31,7 +31,9 @@ const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
 
   // get id's using swr
-  const {data: userFavourites} = useGetRequest<FavouritePropertyIdsResponse>(
+  const {data: userFavourites, mutate} = useGetRequest<
+    FavouritePropertyIdsResponse
+  >(
     {
       url: getEndpointProps(PropertyApiRoutes.FAVOURITE_PROPERTIES_IDS).path,
       headers: {Authorization: `Bearer ${getToken()}`},
@@ -80,10 +82,39 @@ const ListingPage = ({favourites}: AppStateProps): JSX.Element => {
               <Header />
 
               <main tw="flex flex-col flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
-                <DashboardPage
-                  listings={listings.data}
-                  favourites={userFavourites?.data || []}
-                />
+                <section tw="flex flex-1 flex-col sm:flex-row">
+                  <div
+                    css={[
+                      tw`flex-shrink p-6 bg-white`,
+
+                      css`
+                        flex-grow: 2;
+                        flex-basis: 0%;
+                      `,
+                    ]}
+                  >
+                    <h2 tw="text-gray-800 font-medium capitalize text-xl md:text-2xl pb-3">
+                      Listings
+                    </h2>
+
+                    <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                      {listings.data.map((item) => {
+                        const isInFavourites: boolean = (
+                          userFavourites?.data || []
+                        ).includes(item.id);
+
+                        return (
+                          <ListingCard
+                            key={item.id}
+                            item={item}
+                            favourite={isInFavourites}
+                            mutate={mutate}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                </section>
               </main>
             </div>
           </div>

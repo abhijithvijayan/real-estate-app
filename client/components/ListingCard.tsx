@@ -1,19 +1,31 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import {useFormState} from 'react-use-form-state';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
+import {AxiosResponse} from 'axios';
 import tw, {css} from 'twin.macro';
 
 import Icon from './Icon';
 
-import {PropertyListing, PropertyApiRoutes} from '../api/constants';
+import {
+  FavouritePropertyListingResponse,
+  FavouritePropertyIdsResponse,
+  PropertyApiRoutes,
+  PropertyListing,
+} from '../api/constants';
 import api from '../api';
 
 type Props = {
   item: PropertyListing;
   favourite: boolean;
+  mutate: () => Promise<
+    | AxiosResponse<
+        FavouritePropertyListingResponse | FavouritePropertyIdsResponse
+      >
+    | undefined
+  >;
 };
 
-const ListingCard: React.FC<Props> = ({item, favourite}) => {
+const ListingCard: React.FC<Props> = ({item, favourite, mutate}) => {
   const [
     {setField, values},
     {checkbox: checkboxProps, label: labelProps},
@@ -21,15 +33,14 @@ const ListingCard: React.FC<Props> = ({item, favourite}) => {
     action: boolean;
   }>({action: favourite});
 
-  const [liked, setLiked] = useState<boolean>(values.action);
-
   useEffect(() => {
-    setLiked(favourite);
+    // called on refetching
     setField('action', favourite);
   }, [favourite, setField]);
 
   async function handleSubmit(id: string, checked: boolean): Promise<void> {
     const action = checked ? 1 : 0;
+    setField('action', checked);
 
     try {
       const {data}: {data: {status: boolean; message: string}} = await api({
@@ -39,11 +50,16 @@ const ListingCard: React.FC<Props> = ({item, favourite}) => {
 
       if (data.status) {
         // check/uncheck action was successful
-        setLiked(checked);
+        // setLiked(checked);
       }
+
+      // Call bound mutate for revalidation & refetching
+      // https://swr.vercel.app/docs/mutation#bound-mutate
+      mutate();
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      // backend error
+      setField('action', !checked);
     }
   }
 
@@ -81,12 +97,15 @@ const ListingCard: React.FC<Props> = ({item, favourite}) => {
         <div tw="flex items-center justify-end px-4 pt-2 pb-4">
           <div
             tw="inline-flex"
-            {...labelProps('action')}
             onClick={(): void => {
               handleSubmit(item.id, !values.action);
             }}
           >
-            <label tw="block font-bold text-gray-500 cursor-pointer ">
+            <label
+              {...labelProps('action')}
+              htmlFor={item.id}
+              tw="block font-bold text-gray-500 cursor-pointer"
+            >
               <input
                 {...checkboxProps('action')}
                 name={item.id}
@@ -97,7 +116,7 @@ const ListingCard: React.FC<Props> = ({item, favourite}) => {
                 css={[
                   tw`hover:text-gray-800 mr-3 text-gray-600 cursor-pointer`,
 
-                  liked &&
+                  favourite &&
                     css`
                       svg {
                         fill: rgba(45, 55, 72, var(--text-opacity));
