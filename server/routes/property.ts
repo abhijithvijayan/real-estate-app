@@ -25,12 +25,21 @@ router.get(
   asyncHandler(PropertyController.getAllPropertyListings)
 );
 
+// Get user's favourite properties' ids
+router.get(
+  '/listing/favourites/ids',
+  asyncHandler(AuthController.jwtAuth),
+  asyncHandler(PropertyController.getFavouritesIdCollection)
+);
+
+// Get favourite collection with properties
 router.get(
   '/listing/favourites/all',
   asyncHandler(AuthController.jwtAuth),
   asyncHandler(PropertyController.getFavourites)
 );
 
+// Add or remove item to user favourites collection
 router.post(
   '/listing/favourites',
   asyncHandler(AuthController.jwtAuth),

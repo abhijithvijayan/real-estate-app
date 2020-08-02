@@ -326,6 +326,47 @@ class PropertyController {
       .json({message: 'Error performing action', status: false});
   };
 
+  static getFavouritesIdCollection = async (
+    req: Request,
+    res: Response
+  ): Promise<Response<any>> => {
+    const currentUser = req.user as User | undefined;
+
+    if (currentUser === undefined) {
+      return res.status(401).send('No such user');
+    }
+
+    const userRepository = getRepository(User);
+
+    try {
+      const user = await userRepository.findOne({
+        relations: ['userFavourite'],
+        where: {id: currentUser.id},
+      });
+
+      if (user?.userFavourite) {
+        // to load objects inside lazy relations:
+        const properties: Property[] = await user.userFavourite.properties;
+        const idCollection: string[] = await properties.map((item) => item.id);
+
+        return res.status(200).json({
+          data: idCollection,
+          status: true,
+          message: 'Fetching successful',
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      //
+    }
+
+    return res.status(500).json({
+      message: "Error fetching user's favourites id collection",
+      status: false,
+    });
+  };
+
   static getFavourites = async (
     req: Request,
     res: Response
@@ -358,7 +399,7 @@ class PropertyController {
           .leftJoinAndSelect('property.listing', 'seller') // this is being lazy loaded
           .leftJoinAndSelect('seller.user', 'owner') // so output doesn't reflect owner field
           .where('userFavourite.id = :id', {id: user.userFavourite.id})
-          .getMany();
+          .getOne();
 
         return res.status(200).json({
           data: properties,
