@@ -19,7 +19,7 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server: Express = express();
 
-  server.set('port', env.PORT);
+  server.set('port', env.APP_PORT);
   server.use(cookieParser());
   server.use(express.json());
   server.use(express.urlencoded({extended: true}));
