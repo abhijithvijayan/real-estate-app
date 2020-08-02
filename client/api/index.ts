@@ -12,6 +12,7 @@ export type ApiRequestProps = {
   key: Routes;
   route?: (string | number)[];
   isServer?: boolean;
+  token?: string;
   params?: {
     [key: string]: any;
   };
@@ -21,6 +22,7 @@ function fireUpApiRequest({
   key,
   route = [],
   params = {},
+  token = null,
   isServer = false,
 }: ApiRequestProps): AxiosPromise<any> {
   const {path, ...other} = getEndpointProps(key);
@@ -53,7 +55,12 @@ function fireUpApiRequest({
   };
 
   if (!request.noAuth) {
-    config.headers.Authorization = `Bearer ${getToken()}`;
+    if (!isServer) {
+      // Todo: this will fail for SSR(use app context cookie token)
+      config.headers.Authorization = `Bearer ${getToken()}`;
+    } else {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
 
   return axiosInstance({

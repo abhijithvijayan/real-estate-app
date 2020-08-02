@@ -15,7 +15,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      Router.push('/');
+      Router.push('/home/listing');
     }
   }, [isAuthenticated]);
 

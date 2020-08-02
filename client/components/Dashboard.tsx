@@ -3,10 +3,19 @@ import tw, {css} from 'twin.macro';
 
 import ListingCard from './ListingCard';
 
-import {PropertyListing, PropertyApiRoutes} from '../api/constants';
+import {
+  PropertyListing,
+  PropertyApiRoutes,
+  FavouritePropertyListing,
+} from '../api/constants';
 import api from '../api';
 
-const DashboardPage: React.FC<{listings: PropertyListing[]}> = ({listings}) => {
+type Props = {
+  listings: PropertyListing[];
+  favourites: FavouritePropertyListing[];
+};
+
+const DashboardPage: React.FC<Props> = ({listings}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [liked, setLiked] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);

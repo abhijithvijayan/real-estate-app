@@ -1,3 +1,21 @@
+export type FavouritePropertyListing = {
+  id: string;
+  squareMeter: string;
+  shortDescription: string;
+  longDescription: string;
+  noOfRooms: number;
+  noOfBedRooms: number;
+  noOfBathRooms: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type FavouritePropertyListingResponse = {
+  status: boolean;
+  message: string;
+  data: FavouritePropertyListing[];
+};
+
 export type PropertyListing = {
   id: string;
   squareMeter: string;
