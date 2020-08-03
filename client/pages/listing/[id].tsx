@@ -7,12 +7,14 @@ import BodyWrapper from '../../components/BodyWrapper';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Loader from '../../components/Loader';
+import Icon from '../../components/Icon';
 
 import {SidebarContextProvider} from '../../contexts/sidebar-context';
 import {getToken, getCookieFromReq} from '../../util/token';
 import useGetRequest from '../../api/useGetRequest';
 import {useStoreState} from '../../state/store';
 import {
+  FavouritePropertyIdsResponse,
   PropertyListingResponse,
   PropertyApiRoutes,
   getEndpointProps,
@@ -21,12 +23,14 @@ import {
 import api from '../../api';
 
 interface AppStateProps {
+  initialFavourites?: FavouritePropertyIdsResponse;
   initialDetails?: PropertyListingResponse;
   error: boolean;
 }
 
 const PropertyListingViewPage = ({
   initialDetails,
+  initialFavourites,
 }: AppStateProps): JSX.Element => {
   const {isAuthenticated} = useStoreState((s) => s.auth);
   const router = useRouter();
@@ -67,6 +71,10 @@ const PropertyListingViewPage = ({
     );
   }
 
+  const isInFavourites: boolean = (initialFavourites?.data || []).includes(
+    propertyListing.data.id
+  );
+
   return (
     <>
       <SidebarContextProvider>
@@ -91,14 +99,42 @@ const PropertyListingViewPage = ({
                   >
                     <div tw="container px-6 mx-auto flex justify-center">
                       <div tw="md:flex md:items-center">
-                        <div tw="md:w-1/2 w-full h-64">
+                        <div tw="md:w-1/2 w-full h-64 relative">
+                          <div
+                            tw="text-center absolute"
+                            style={{top: '-22px', right: '-22px'}}
+                          >
+                            <Icon
+                              name="heart"
+                              css={[
+                                tw`hover:text-gray-800 p-3 text-gray-600 bg-white rounded-full shadow-lg cursor-pointer`,
+
+                                css`
+                                  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+                                `,
+
+                                isInFavourites &&
+                                  css`
+                                    svg {
+                                      fill: rgba(
+                                        45,
+                                        55,
+                                        72,
+                                        var(--text-opacity)
+                                      );
+                                    }
+                                  `,
+                              ]}
+                            />
+                          </div>
                           <img
                             tw="object-cover w-full h-full max-w-lg mx-auto rounded-md"
                             src={propertyListing.data.photos[0].url}
                             alt="Property"
                           />
                         </div>
-                        <div tw="md:ml-8 md:mt-0 md:w-1/2 w-full max-w-lg mx-auto mt-5">
+
+                        <div tw="md:ml-8 md:mt-0 md:w-1/2 w-full max-w-lg mx-auto mt-5 md:pl-6">
                           <h3 tw="text-3xl text-black uppercase">
                             {propertyListing.data.title}
                           </h3>
@@ -184,7 +220,19 @@ PropertyListingViewPage.getInitialProps = async (
         route: [id],
       });
 
-      return {error: false, initialDetails: data};
+      const {
+        data: favourites,
+      }: {data: FavouritePropertyIdsResponse} = await api({
+        key: PropertyApiRoutes.FAVOURITE_PROPERTIES_IDS,
+        isServer: true,
+        token,
+      });
+
+      return {
+        error: false,
+        initialDetails: data,
+        initialFavourites: favourites,
+      };
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
