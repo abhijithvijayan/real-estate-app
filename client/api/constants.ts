@@ -93,6 +93,12 @@ export type PropertiesListingResponse = {
   message: string;
 };
 
+export type PropertyListingResponse = {
+  status: true;
+  data: PropertyListing;
+  message: string;
+};
+
 // **** ---------------------------- **** //
 
 export enum AuthApiRoutes {
@@ -105,6 +111,7 @@ export enum PropertyApiRoutes {
   PROPERTY_FAVOURITE_ACTION = 'propertyFavouriteAction',
   LIST_FAVOURITE_PROPERTIES = 'listFavouriteProperties',
   FAVOURITE_PROPERTIES_IDS = 'favouritePropertiesIds',
+  GET_PROPERTY_LISTING = 'getPropertyListing',
 }
 
 export type Routes = PropertyApiRoutes | AuthApiRoutes;
@@ -137,6 +144,10 @@ const endpoints: Endpoints = {
 
   favouritePropertiesIds: {
     path: '/api/v1/property/listing/favourites/ids',
+  },
+
+  getPropertyListing: {
+    path: '/api/v1/property/listing', // route => /api/v1/property/listing/uuid
   },
 };
 

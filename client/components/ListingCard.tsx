@@ -3,12 +3,14 @@ import {useFormState} from 'react-use-form-state';
 import React, {useEffect} from 'react';
 import {AxiosResponse} from 'axios';
 import tw, {css} from 'twin.macro';
+import Link from 'next/link';
 
 import Icon from './Icon';
 
 import {
   FavouritePropertyListingResponse,
   FavouritePropertyIdsResponse,
+  PropertyListingResponse,
   PropertyApiRoutes,
   PropertyListing,
 } from '../api/constants';
@@ -19,7 +21,9 @@ type Props = {
   favourite: boolean;
   mutate: () => Promise<
     | AxiosResponse<
-        FavouritePropertyListingResponse | FavouritePropertyIdsResponse
+        | FavouritePropertyListingResponse
+        | FavouritePropertyIdsResponse
+        | PropertyListingResponse
       >
     | undefined
   >;
@@ -68,7 +72,7 @@ const ListingCard: React.FC<Props> = ({item, favourite, mutate}) => {
       <div tw="max-w-xs mx-auto bg-white shadow rounded-lg overflow-hidden">
         <img
           tw="h-48 w-full object-cover select-none"
-          src={item.photos[0]?.url || ''}
+          src={(item?.photos?.length > 0 && item.photos[0]?.url) || ''}
           alt="cover"
         />
 
@@ -98,6 +102,7 @@ const ListingCard: React.FC<Props> = ({item, favourite, mutate}) => {
 
         <div tw="flex items-center justify-end px-4 pt-2 pb-4">
           <div
+            title="Save"
             tw="inline-flex"
             onClick={(): void => {
               handleSubmit(item.id, !values.action);
@@ -128,10 +133,14 @@ const ListingCard: React.FC<Props> = ({item, favourite, mutate}) => {
               />
             </label>
           </div>
-          <Icon
-            name="external-link"
-            tw="cursor-pointer text-gray-600 hover:text-gray-800"
-          />
+          <Link href={`/listing/${item.id}`}>
+            <a title="View">
+              <Icon
+                name="external-link"
+                tw="cursor-pointer text-gray-600 hover:text-gray-800"
+              />
+            </a>
+          </Link>
         </div>
       </div>
     </>

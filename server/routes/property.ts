@@ -46,4 +46,10 @@ router.post(
   asyncHandler(PropertyController.addOrRemoveFromFavourites)
 );
 
+router.get(
+  '/listing/:id',
+  asyncHandler(AuthController.jwtAuth),
+  asyncHandler(PropertyController.getPropertyListing)
+);
+
 export default router;

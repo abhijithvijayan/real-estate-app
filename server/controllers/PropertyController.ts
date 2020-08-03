@@ -237,7 +237,7 @@ class PropertyController {
       return res.status(200).json({
         data: properties,
         status: true,
-        message: 'Fetching successful',
+        message: 'Fetch successful',
       });
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -368,7 +368,7 @@ class PropertyController {
       return res.status(200).json({
         data: idCollection,
         status: true,
-        message: 'Fetching successful',
+        message: 'Fetch successful',
       });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
@@ -427,7 +427,7 @@ class PropertyController {
       return res.status(200).json({
         data: properties,
         status: true,
-        message: 'Fetching successful',
+        message: 'Fetch successful',
       });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
@@ -443,9 +443,7 @@ class PropertyController {
     req: Request,
     res: Response
   ): Promise<Response<any>> => {
-    //
     const propertiesRepository = getRepository(Property);
-    // Todo: attach address and all other fields
 
     try {
       const properties = await propertiesRepository
@@ -463,7 +461,7 @@ class PropertyController {
       return res.status(200).json({
         data: properties,
         status: true,
-        message: 'Fetching successful',
+        message: 'Fetch successful',
       });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
@@ -472,6 +470,41 @@ class PropertyController {
     return res
       .status(500)
       .json({message: 'Error fetching properties', status: false});
+  };
+
+  static getPropertyListing = async (
+    req: Request,
+    res: Response
+  ): Promise<Response<any>> => {
+    const {id} = req.params;
+    const propertiesRepository = getRepository(Property);
+
+    try {
+      const property = await propertiesRepository
+        .createQueryBuilder('property')
+        .leftJoinAndSelect('property.photos', 'photos')
+        .leftJoinAndSelect('property.address', 'address')
+        .leftJoinAndSelect('address.zipCode', 'zipCode')
+        .leftJoinAndSelect('zipCode.city', 'city')
+        .leftJoinAndSelect('zipCode.state', 'state')
+        .leftJoinAndSelect('zipCode.country', 'country')
+        .leftJoinAndSelect('property.listing', 'seller') // this is being lazy loaded
+        .leftJoinAndSelect('seller.user', 'owner') // so output doesn't reflect owner field
+        .where('property.id = :id', {id})
+        .getOne();
+
+      return res.status(200).json({
+        data: property,
+        status: true,
+        message: 'Fetch successful',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      //
+    }
+    return res
+      .status(500)
+      .json({message: 'Error while fetching property', status: false});
   };
 }
 
