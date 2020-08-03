@@ -77,9 +77,11 @@ const ListingCard: React.FC<Props> = ({item, favourite, mutate}) => {
         />
 
         <div tw="px-4 py-2">
-          <h1 tw="text-gray-900 font-bold text-sm uppercase mb-0 select-none">
-            {item.title}
-          </h1>
+          <Link href={`/listing/${item.id}`}>
+            <a tw="text-blue-900 font-bold text-lg uppercase mb-0 select-none cursor-pointer">
+              {item.title}
+            </a>
+          </Link>
         </div>
 
         <div tw="px-4">
