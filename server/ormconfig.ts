@@ -18,11 +18,11 @@ const config: ConnectionOptions = {
   username: env.DB_USER,
   password: env.DB_PASSWORD,
   database: env.DB_NAME,
-  synchronize: env.TYPEORM_SYNCHRONIZE, // Disable this in production
+  synchronize: env.TYPEORM_SYNCHRONIZE, // Todo: disable this in production
   logging: env.TYPEORM_LOGGING,
-  entities: ['production-server/models/**/*{.ts,.js}'],
-  migrations: ['production-server/migrations/**/*{.ts,.js}'],
-  // subscribers: ['production-server/subscribers/**/*{.ts,.js}'],
+  entities: [`${__dirname}/../production-server/models/**/*{.ts,.js}`],
+  migrations: [`${__dirname}/../production-server/migrations/**/*{.ts,.js}`],
+  subscribers: [`${__dirname}/../production-server/subscribers/**/*{.ts,.js}`],
   cli: {
     entitiesDir: 'server/models',
     migrationsDir: 'server/migrations',
