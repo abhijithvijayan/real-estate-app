@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import {useFormState} from 'react-use-form-state';
 import Router, {useRouter} from 'next/router';
 import React, {useEffect} from 'react';
 import {NextPageContext} from 'next';
@@ -36,7 +38,7 @@ const PropertyListingViewPage = ({
   const router = useRouter();
   const {id} = router.query;
 
-  // get property listings using swr
+  // get single property listing using swr
   const {data: propertyListing, error: propertyListingError} = useGetRequest<
     PropertyListingResponse
   >(
@@ -49,11 +51,38 @@ const PropertyListingViewPage = ({
     {initialData: initialDetails}
   );
 
+  // get user favourites ids using swr
+  const {data: favourites, mutate} = useGetRequest<
+    FavouritePropertyIdsResponse
+  >(
+    {
+      url: getEndpointProps(PropertyApiRoutes.FAVOURITE_PROPERTIES_IDS).path,
+      headers: {Authorization: `Bearer ${getToken()}`},
+    },
+    {initialData: initialFavourites}
+  );
+
+  const isInFavourites: boolean = (favourites?.data || []).includes(
+    propertyListing?.data?.id || ''
+  );
+
+  const [
+    {setField, values},
+    {checkbox: checkboxProps, label: labelProps},
+  ] = useFormState<{
+    action: boolean;
+  }>({action: isInFavourites});
+
   useEffect(() => {
     if (!isAuthenticated) {
       Router.push(AppRoutes.SIGN_IN);
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    // called on refetching
+    setField('action', isInFavourites);
+  }, [isInFavourites, setField]);
 
   if (!isAuthenticated) {
     return <div>Not authenticated</div>;
@@ -71,9 +100,29 @@ const PropertyListingViewPage = ({
     );
   }
 
-  const isInFavourites: boolean = (initialFavourites?.data || []).includes(
-    propertyListing.data.id
-  );
+  async function handleSubmit(checked: boolean): Promise<void> {
+    const action = checked ? 1 : 0;
+    setField('action', checked);
+
+    try {
+      const {data}: {data: {status: boolean; message: string}} = await api({
+        key: PropertyApiRoutes.PROPERTY_FAVOURITE_ACTION,
+        params: {listingId: propertyListing?.data.id, action},
+      });
+
+      if (data.status) {
+        // check/uncheck action was successful
+      }
+
+      // Call bound mutate for revalidation & refetching
+      // https://swr.vercel.app/docs/mutation#bound-mutate
+      mutate();
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setField('action', !checked);
+    }
+  }
 
   return (
     <>
@@ -103,29 +152,43 @@ const PropertyListingViewPage = ({
                           <div
                             tw="text-center absolute"
                             style={{top: '-22px', right: '-22px'}}
+                            onClick={(): void => {
+                              handleSubmit(!values.action);
+                            }}
                           >
-                            <Icon
-                              name="heart"
-                              css={[
-                                tw`hover:text-gray-800 p-3 text-gray-600 bg-white rounded-full shadow-lg cursor-pointer`,
+                            <label
+                              {...labelProps('action')}
+                              htmlFor={propertyListing.data.id}
+                              tw="block font-bold text-gray-500 cursor-pointer"
+                            >
+                              <input
+                                {...checkboxProps('action')}
+                                name={propertyListing.data.id}
+                                tw="mr-2 leading-tight hidden"
+                              />
+                              <Icon
+                                name="heart"
+                                css={[
+                                  tw`hover:text-gray-800 p-3 text-gray-600 bg-white rounded-full shadow-lg cursor-pointer`,
 
-                                css`
-                                  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
-                                `,
-
-                                isInFavourites &&
                                   css`
-                                    svg {
-                                      fill: rgba(
-                                        45,
-                                        55,
-                                        72,
-                                        var(--text-opacity)
-                                      );
-                                    }
+                                    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
                                   `,
-                              ]}
-                            />
+
+                                  isInFavourites &&
+                                    css`
+                                      svg {
+                                        fill: rgba(
+                                          45,
+                                          55,
+                                          72,
+                                          var(--text-opacity)
+                                        );
+                                      }
+                                    `,
+                                ]}
+                              />
+                            </label>
                           </div>
                           <img
                             tw="object-cover w-full h-full max-w-lg mx-auto rounded-md"
