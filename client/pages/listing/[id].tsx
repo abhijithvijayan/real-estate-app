@@ -4,7 +4,6 @@ import {NextPageContext} from 'next';
 import tw, {css} from 'twin.macro';
 
 import BodyWrapper from '../../components/BodyWrapper';
-import ListingCard from '../../components/ListingCard';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Loader from '../../components/Loader';
@@ -34,11 +33,9 @@ const PropertyListingViewPage = ({
   const {id} = router.query;
 
   // get property listings using swr
-  const {
-    data: propertyListing,
-    error: propertyListingError,
-    mutate,
-  } = useGetRequest<PropertyListingResponse>(
+  const {data: propertyListing, error: propertyListingError} = useGetRequest<
+    PropertyListingResponse
+  >(
     {
       url: `${
         getEndpointProps(PropertyApiRoutes.GET_PROPERTY_LISTING).path
@@ -92,16 +89,71 @@ const PropertyListingViewPage = ({
                       `,
                     ]}
                   >
-                    <h2 tw="text-gray-800 font-medium capitalize text-xl md:text-2xl pb-3">
-                      {propertyListing.data.title}
-                    </h2>
-                    <div tw="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                      <ListingCard
-                        key={propertyListing.data.id}
-                        item={propertyListing.data}
-                        favourite={false} // Todo: get this data from SSR
-                        mutate={mutate}
-                      />
+                    <div tw="container px-6 mx-auto flex justify-center">
+                      <div tw="md:flex md:items-center">
+                        <div tw="md:w-1/2 w-full h-64">
+                          <img
+                            tw="object-cover w-full h-full max-w-lg mx-auto rounded-md"
+                            src={propertyListing.data.photos[0].url}
+                            alt="Property"
+                          />
+                        </div>
+                        <div tw="md:ml-8 md:mt-0 md:w-1/2 w-full max-w-lg mx-auto mt-5">
+                          <h3 tw="text-3xl text-black uppercase">
+                            {propertyListing.data.title}
+                          </h3>
+
+                          <p tw="py-3 text-xl text-gray-700 font-semibold">
+                            &#8377; {propertyListing.data.price}
+                          </p>
+
+                          <div tw="flex flex-row justify-between items-center">
+                            <div>
+                              <p>{propertyListing.data.address.street}</p>
+                            </div>
+
+                            <div tw="flex flex-row">
+                              <div>
+                                <p tw="pr-4 text-gray-500">
+                                  {propertyListing.data.noOfRooms} rooms
+                                </p>
+                              </div>
+
+                              <div>
+                                <p tw="pr-4 text-gray-500">
+                                  {propertyListing.data.noOfBathRooms} baths
+                                </p>
+                              </div>
+
+                              <div>
+                                <p tw="text-gray-500">
+                                  {propertyListing.data.squareFeet} ft
+                                  <sup>2</sup>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <p>
+                              {propertyListing.data.address.zipCode.city.name},{' '}
+                              {propertyListing.data.address.zipCode.state.name},{' '}
+                              {
+                                propertyListing.data.address.zipCode.country
+                                  .name
+                              }
+                            </p>
+                          </div>
+
+                          <div>
+                            <h2 tw="uppercase font-medium text-lg">
+                              Description
+                            </h2>
+                          </div>
+
+                          <div>{propertyListing.data.longDescription}</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </section>
